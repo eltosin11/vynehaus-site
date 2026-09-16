@@ -1,0 +1,3484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Churches — VyneHaus</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    --cream: #F7F3ED; --cream-dark: #EDE6DA; --green: #2C4A3E; --green-mid: #3D6355;
+    --green-light: #EAF0EC; --terra: #C4603A; --terra-light: #F5EAE4; --terra-deep: #A84E2E;
+    --gold: #B8922A; --gold-light: #FBF3E2; --ink: #1C1C1A; --ink-mid: #3A3A36;
+    --muted: #7A7A72; --border: #DDD6CA; --white: #FFFFFF;
+    --blue: #2C5282; --blue-light: #E8EEF5;
+    --font-display: 'Lora', Georgia, serif; --font-body: 'DM Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--cream); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 200; background: rgba(247,243,237,0.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-logo { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--green); letter-spacing: -0.02em; text-decoration: none; }
+  .nav-logo span { color: var(--terra); }
+  .nav-links { display: flex; gap: 1.75rem; align-items: center; list-style: none; }
+  .nav-links a { font-size: 14px; color: var(--ink-mid); text-decoration: none; }
+  .nav-links a:hover { color: var(--terra); }
+
+  /* SEARCH HEADER */
+  .search-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 1.5rem 2rem 0; }
+  .search-header-inner { max-width: 1280px; margin: 0 auto; }
+  .search-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: var(--green); margin-bottom: 1rem; letter-spacing: -0.01em; }
+  .search-bar { display: flex; align-items: center; gap: 8px; background: var(--cream); border: 1.5px solid var(--border); border-radius: 30px; padding: 6px 6px 6px 18px; max-width: 480px; transition: border-color 0.2s; }
+  .search-bar:focus-within { border-color: var(--terra); }
+  .search-bar > i { color: var(--terra); font-size: 18px; }
+  .search-bar input { flex: 1; border: none; background: transparent; font-size: 15px; font-family: var(--font-body); color: var(--ink); padding: 8px 0; }
+  .search-bar input:focus { outline: none; }
+  .search-bar button { background: var(--green); color: var(--cream); border: none; border-radius: 22px; padding: 10px 20px; font-size: 14px; font-weight: 500; font-family: var(--font-body); cursor: pointer; }
+
+  /* QUICK FILTER BAR */
+  .quick-bar { display: flex; align-items: center; gap: 8px; padding: 1.25rem 0 1.25rem; overflow-x: auto; scrollbar-width: none; }
+  .quick-bar::-webkit-scrollbar { display: none; }
+  .qf { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 13px; padding: 8px 15px; border-radius: 22px; border: 1px solid var(--border); background: var(--white); color: var(--ink-mid); cursor: pointer; transition: all 0.15s; font-family: var(--font-body); }
+  .qf:hover { border-color: var(--green-mid); }
+  .qf.on { background: var(--green); color: var(--cream); border-color: var(--green); }
+  .qf i { font-size: 15px; }
+  .qf-divider { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; margin: 0 4px; }
+  .qf-more { color: var(--terra); font-weight: 500; }
+
+  /* LAYOUT */
+  .layout { max-width: 1280px; margin: 0 auto; padding: 1.5rem 2rem 4rem; display: grid; grid-template-columns: 256px 1fr; gap: 2rem; align-items: start; }
+
+  /* SIDEBAR */
+  .sidebar { position: sticky; top: 80px; background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; max-height: calc(100vh - 100px); overflow-y: auto; }
+  .sidebar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border); }
+  .sidebar-head h3 { font-size: 14px; font-weight: 600; color: var(--green); }
+  .sidebar-head button { font-size: 12px; color: var(--terra); background: none; border: none; cursor: pointer; font-family: var(--font-body); }
+  .filter-group { margin-bottom: 1.25rem; }
+  .filter-group:last-child { margin-bottom: 0; }
+  .filter-group h4 { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+  .opt { display: flex; align-items: center; gap: 9px; padding: 5px 0; cursor: pointer; font-size: 14px; color: var(--ink-mid); user-select: none; }
+  .opt:hover { color: var(--ink); }
+  .opt input { display: none; }
+  .opt .box { width: 17px; height: 17px; border: 1.5px solid var(--border); border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+  .opt input:checked + .box { background: var(--green); border-color: var(--green); }
+  .opt input:checked + .box::after { content: '✓'; color: var(--cream); font-size: 11px; }
+  .opt .count { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+  /* RESULTS */
+  .results-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem; }
+  .results-count { font-size: 15px; color: var(--ink-mid); }
+  .results-count strong { color: var(--green); font-weight: 600; }
+  .sort-select { font-size: 13px; padding: 7px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); color: var(--ink-mid); font-family: var(--font-body); cursor: pointer; }
+
+  .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.25rem; }
+
+  /* CHURCH CARD */
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: all 0.22s; cursor: pointer; display: flex; flex-direction: column; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(44,74,62,0.09); border-color: var(--green-mid); }
+  .card-banner { height: 90px; position: relative; display: flex; align-items: flex-end; padding: 0.85rem 1.1rem; }
+  .card-banner.preach { background: linear-gradient(135deg, #3D6355, #2C4A3E); }
+  .card-banner.liturgy { background: linear-gradient(135deg, #3A5A7A, #2C5282); }
+  .card-banner.spirit { background: linear-gradient(135deg, #C4603A, #A84E2E); }
+  .card-struct { font-size: 11px; color: rgba(255,255,255,0.92); background: rgba(0,0,0,0.18); padding: 3px 10px; border-radius: 14px; font-weight: 500; backdrop-filter: blur(4px); }
+  .card-body { padding: 1.1rem 1.25rem 1.25rem; flex: 1; display: flex; flex-direction: column; }
+  .card-trad { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.35rem; }
+  .card-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; color: var(--green); line-height: 1.25; margin-bottom: 0.5rem; }
+  .card-meta { font-size: 13px; color: var(--muted); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .card-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 0.85rem; }
+  .ctag { font-size: 11px; padding: 3px 9px; border-radius: 14px; background: var(--cream-dark); color: var(--ink-mid); }
+  .ctag.welcome { background: var(--green-light); color: var(--green); }
+  .card-note { font-size: 13px; color: var(--ink-mid); line-height: 1.55; margin-top: auto; padding-top: 0.6rem; border-top: 1px dashed var(--border); }
+  .card-times { font-size: 12px; color: var(--muted); margin-top: 0.6rem; display: flex; align-items: center; gap: 5px; }
+  .card-times i { font-size: 13px; }
+
+  .card-tagline { font-family: var(--font-display); font-style: italic; font-size: 14px; color: var(--ink-mid); margin-bottom: 0.7rem; line-height: 1.45; }
+
+  /* VIEW TOGGLE + MAP */
+  .results-tools { display: flex; align-items: center; gap: 8px; }
+  .view-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .view-toggle button { font-size: 13px; padding: 7px 12px; border: none; background: var(--white); color: var(--ink-mid); cursor: pointer; font-family: var(--font-body); display: inline-flex; align-items: center; gap: 5px; }
+  .view-toggle button.on { background: var(--green); color: var(--cream); }
+  #map { height: calc(100vh - 220px); min-height: 420px; border-radius: 16px; border: 1px solid var(--border); }
+  #map[hidden], .map-note[hidden], .results-grid[hidden] { display: none; }
+  .map-pop strong { font-family: var(--font-display); color: var(--green); font-size: 15px; }
+  .map-pop span { display: block; font-size: 12px; color: var(--terra); text-transform: uppercase; letter-spacing: 0.04em; margin: 2px 0 6px; }
+  .map-pop a { color: var(--green); font-weight: 600; }
+  .pop-unverified { display: block; font-size: 12px; color: #7A4B12; margin-bottom: 4px; }
+  .card-unverified { position: absolute; top: 0.7rem; right: 0.8rem; font-size: 11px; font-weight: 600; color: #7A4B12; background: #FBF3E2; padding: 3px 9px; border-radius: 12px; }
+  .map-note { font-size: 12px; color: var(--muted); margin-top: 0.5rem; }
+
+  .no-results { grid-column: 1/-1; text-align: center; padding: 3rem 1rem; color: var(--muted); }
+  .no-results h3 { font-family: var(--font-display); font-size: 1.3rem; color: var(--green); margin-bottom: 0.5rem; }
+
+  /* mobile filter toggle */
+  .mobile-filter-btn { display: none; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; position: fixed; top: 0; left: 0; width: 85%; max-width: 320px; height: 100vh; max-height: 100vh; z-index: 300; border-radius: 0; }
+    .sidebar.open { display: block; }
+    .mobile-filter-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 8px 15px; border-radius: 22px; border: 1px solid var(--green); background: var(--white); color: var(--green); cursor: pointer; font-family: var(--font-body); font-weight: 500; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(28,28,26,0.4); z-index: 250; }
+    .overlay.open { display: block; }
+  }
+  @media (max-width: 640px) {
+    nav { padding: 0 1rem; } .nav-links { display: none; }
+    .search-header { padding: 1.25rem 1rem 0; }
+    .layout { padding: 1rem 1rem 3rem; }
+    .results-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Vyne<span>Haus</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Try Church guide</a></li>
+    <li><a href="#">The film</a></li>
+    <li><a href="#">For churches</a></li>
+  </ul>
+</nav>
+
+<!-- SEARCH HEADER -->
+<div class="search-header">
+  <div class="search-header-inner">
+    <h1 class="search-title">Churches in Roanoke, VA</h1>
+    <div class="search-bar">
+      <i class="ti ti-map-pin" aria-hidden="true"></i>
+      <input type="text" id="searchInput" placeholder="Search by church name" aria-label="Search by church name">
+      <button>Search</button>
+    </div>
+
+    <!-- QUICK FILTER BAR -->
+    <div class="quick-bar" id="quickBar">
+      <button class="qf" data-quick="seekers"><i class="ti ti-door-enter"></i> Welcomes newcomers</button>
+      <button class="qf" data-quick="english"><i class="ti ti-language"></i> English service</button>
+      <button class="qf" data-quick="kids"><i class="ti ti-mood-kid"></i> Kids' program</button>
+      <button class="qf" data-quick="accessible"><i class="ti ti-wheelchair"></i> Accessible</button>
+      <button class="qf" data-quick="livestream"><i class="ti ti-device-tv"></i> Online option</button>
+      <span class="qf-divider"></span>
+      <button class="qf qf-more" id="moreFiltersBtn"><i class="ti ti-adjustments-horizontal"></i> All filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h3>Filters</h3>
+      <button id="clearAll">Clear all</button>
+    </div>
+
+    <div class="filter-group">
+      <h4>Tradition</h4>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="catholic"><span class="box"></span> Catholic <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="orthodox"><span class="box"></span> Orthodox <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="anglican"><span class="box"></span> Anglican / Episcopal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="methodist"><span class="box"></span> Methodist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="baptist"><span class="box"></span> Baptist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="presbyterian"><span class="box"></span> Presbyterian <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="lutheran"><span class="box"></span> Lutheran <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="pentecostal"><span class="box"></span> Pentecostal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="nondenom"><span class="box"></span> Non-denominational <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="other"><span class="box"></span> Other traditions <span class="count"></span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Service centered on</h4>
+      <label class="opt"><input type="checkbox" data-f="structure" value="preach"><span class="box"></span> Preaching <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="liturgy"><span class="box"></span> Liturgy <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="spirit"><span class="box"></span> Spirit-led <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Language</h4>
+      <label class="opt"><input type="checkbox" data-f="language" value="english"><span class="box"></span> English <span class="count">5</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="spanish"><span class="box"></span> Spanish <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="korean"><span class="box"></span> Korean <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="amharic"><span class="box"></span> Amharic <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Worship style</h4>
+      <label class="opt"><input type="checkbox" data-f="music" value="contemporary"><span class="box"></span> Contemporary band <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="traditional"><span class="box"></span> Traditional / hymns <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="chant"><span class="box"></span> Liturgical chant <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="gospel"><span class="box"></span> Gospel / expressive <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Practical</h4>
+      <label class="opt"><input type="checkbox" data-f="practical" value="kids"><span class="box"></span> Kids' program <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="accessible"><span class="box"></span> Wheelchair accessible <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="parking"><span class="box"></span> Parking available <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="livestream"><span class="box"></span> Online / livestream <span class="count">3</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Welcome</h4>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="seekers"><span class="box"></span> Welcomes newcomers <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="women_lead"><span class="box"></span> Women in leadership <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="lgbtq"><span class="box"></span> LGBTQ+ affirming <span class="count">1</span></label>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <main>
+    <div class="results-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-filter-btn" id="mobileFilterBtn"><i class="ti ti-adjustments-horizontal"></i> Filters</button>
+        <span class="results-count"><strong id="count">0</strong> churches</span>
+      </div>
+      <div class="results-tools">
+        <select class="sort-select" id="sortSelect" aria-label="Sort">
+          <option value="name">Sort: Name A–Z</option>
+          <option value="complete">Sort: Most complete profile</option>
+          <option value="verified">Sort: Recently verified</option>
+        </select>
+        <div class="view-toggle" role="group" aria-label="View">
+          <button id="listBtn" class="on"><i class="ti ti-layout-grid"></i> List</button>
+          <button id="mapBtn"><i class="ti ti-map-2"></i> Map</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="grid"></div>
+    <div id="map" hidden></div>
+    <p class="map-note" id="mapNote" hidden></p>
+  </main>
+</div>
+
+<script>
+  // Real Arlington churches researched, mapped to v0.3 schema fields
+  const churches = [
+  {
+    "slug": "mount-moriah-church",
+    "name": "Mount Moriah Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3042782,
+    "lon": -79.8906851,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "covenant-church",
+    "name": "Covenant Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2556865,
+    "lon": -80.0139195,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "east-end-church",
+    "name": "East End Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2937511,
+    "lon": -79.9014221,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "hollins-road-church",
+    "name": "Hollins Road Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3065256,
+    "lon": -79.9255921,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "pleasant-grove-baptist-church",
+    "name": "Pleasant Grove Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2451423,
+    "lon": -80.0269821,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "ridgewood-church",
+    "name": "Ridgewood Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2851356,
+    "lon": -80.0208727,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "windsor-church",
+    "name": "Windsor Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2526367,
+    "lon": -80.0125383,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "belmont-baptist-church",
+    "name": "Belmont Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.270491,
+    "lon": -79.9299681,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "belmont-christian-church",
+    "name": "Belmont Christian Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2698562,
+    "lon": -79.9253199,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "belmont-presbyterian-church",
+    "name": "Belmont Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2651431,
+    "lon": -79.9278175,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "bibleway-pentecostal-apostolic-church-of-christ",
+    "name": "Bibleway Pentecostal Apostolic Church of Christ",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.281525,
+    "lon": -79.9589236,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "christ-episcopal-church",
+    "name": "Christ Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.264028,
+    "lon": -79.9472533,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "church-of-god",
+    "name": "Church of God",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2781967,
+    "lon": -79.9472626,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "church-of-god-2",
+    "name": "Church of God",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2826332,
+    "lon": -79.9683689,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "church-of-god-in-christ",
+    "name": "Church of God in Christ",
+    "tradition": "pentecostal",
+    "traditionLabel": "Church of God in Christ",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2750919,
+    "lon": -79.9575535,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "church-of-god-tabernacle",
+    "name": "Church of God Tabernacle",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2901367,
+    "lon": -79.9339271,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "congregational-holiness-church",
+    "name": "Congregational Holiness Church",
+    "tradition": "other",
+    "traditionLabel": "United Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2659747,
+    "lon": -79.9469787,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "ebenezer-african-methodist-episcopal-church",
+    "name": "Ebenezer African Methodist Episcopal Church",
+    "tradition": "methodist",
+    "traditionLabel": "African Methodist Episcopal",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2757883,
+    "lon": -79.9409845,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "evangelical-united-brethren-in-christ-church",
+    "name": "Evangelical United Brethren in Christ Church",
+    "tradition": "nondenom",
+    "traditionLabel": "Evangelical",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2662548,
+    "lon": -79.9550296,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "fellowship-baptist-church",
+    "name": "Fellowship Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2665298,
+    "lon": -79.9261524,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "fifth-avenue-presbyterian-church",
+    "name": "Fifth Avenue Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2781967,
+    "lon": -79.9450396,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "first-baptist-church",
+    "name": "First Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english",
+      "spanish"
+    ],
+    "music": [
+      "gospel",
+      "traditional"
+    ],
+    "practical": [
+      "kids",
+      "livestream"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Connected in Christ to Lead Others to Him",
+    "times": "Sun 10:30am",
+    "lat": 37.2766701,
+    "lon": -79.9401116,
+    "verified": "2026-09-15",
+    "unverified": false,
+    "completeness": 8
+  },
+  {
+    "slug": "free-saints-temple",
+    "name": "Free Saints Temple",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2662497,
+    "lon": -79.9255945,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "grandview-heights-church-of-the-nazarene",
+    "name": "Grandview Heights Church of the Nazarene",
+    "tradition": "other",
+    "traditionLabel": "Church of the Nazarene",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2659765,
+    "lon": -79.9297659,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "greene-memorial-united-methodist-church",
+    "name": "Greene Memorial United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2703797,
+    "lon": -79.9439128,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "high-street-baptist-church",
+    "name": "High Street Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2916475,
+    "lon": -79.9643555,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "house-of-prayer-church",
+    "name": "House of Prayer Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2748579,
+    "lon": -79.9225444,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "huntington-court-united-methodist-church",
+    "name": "Huntington Court United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3020842,
+    "lon": -79.9431021,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "kingdom-hall-of-jehovahs-witnesses",
+    "name": "Kingdom Hall of Jehovahs Witnesses",
+    "tradition": "other",
+    "traditionLabel": "Jehovah's Witnesses",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2731914,
+    "lon": -79.9130944,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "loudon-avenue-christian-church",
+    "name": "Loudon Avenue Christian Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2771777,
+    "lon": -79.9527094,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "maple-street-baptist-church",
+    "name": "Maple Street Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2792986,
+    "lon": -79.9539196,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "melrose-christian-church",
+    "name": "Melrose Christian Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2853012,
+    "lon": -79.9721631,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "morning-star-baptist-church",
+    "name": "Morning Star Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2743396,
+    "lon": -79.9663078,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "mount-sinai-true-church-of-god",
+    "name": "Mount Sinai True Church of God",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2745991,
+    "lon": -79.9578283,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "ninth-street-church-of-the-brethren",
+    "name": "Ninth Street Church of the Brethren",
+    "tradition": "other",
+    "traditionLabel": "Church of the Brethren",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.264305,
+    "lon": -79.9275397,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "pentecostal-holiness-church",
+    "name": "Pentecostal Holiness Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2730942,
+    "lon": -79.9285499,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "pilgrim-holiness-church",
+    "name": "Pilgrim Holiness Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2843031,
+    "lon": -79.9678163,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "saint-elias-roman-catholic-church",
+    "name": "Saint Elias Roman Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2726019,
+    "lon": -79.9575959,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "saint-marks-lutheran-church",
+    "name": "Saint Marks Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2645881,
+    "lon": -79.9461547,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "saint-pauls-evangelical-and-reformed-church",
+    "name": "Saint Pauls Evangelical and Reformed Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Reformed",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.262088,
+    "lon": -79.9425412,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "saint-pauls-memorial-methodist-episcopal-church",
+    "name": "Saint Pauls Memorial Methodist Episcopal Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2769514,
+    "lon": -79.9484027,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "second-wesleyan-methodist-church",
+    "name": "Second Wesleyan Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2745779,
+    "lon": -79.9189309,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "seventeenth-street-baptist-church",
+    "name": "Seventeenth Street Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2767976,
+    "lon": -79.9208792,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "trinity-united-methodist-church",
+    "name": "Trinity United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2659747,
+    "lon": -79.9450389,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "valley-view-wesleyan-methodist-church",
+    "name": "Valley View Wesleyan Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.298281,
+    "lon": -79.9450819,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "west-end-presbyterian-church",
+    "name": "West End Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2704145,
+    "lon": -79.9625312,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "airlee-court-baptist-church",
+    "name": "Airlee Court Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3158285,
+    "lon": -79.9559348,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "bethany-christian-church",
+    "name": "Bethany Christian Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3112497,
+    "lon": -79.9330937,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "calvary-tabernacle-church",
+    "name": "Calvary Tabernacle Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2854126,
+    "lon": -79.9664205,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "central-baptist-church",
+    "name": "Central Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2815295,
+    "lon": -79.9289292,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "christ-lutheran-church",
+    "name": "Christ Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2579209,
+    "lon": -79.9839202,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "church-of-christ",
+    "name": "Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2609701,
+    "lon": -79.9925382,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2571883,
+    "lon": -79.984684,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "church-of-the-living-god",
+    "name": "Church of the Living God",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2892981,
+    "lon": -79.976703,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "connelly-memorial-baptist-church",
+    "name": "Connelly Memorial Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3023532,
+    "lon": -79.9964269,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "east-end-baptist-church",
+    "name": "East End Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2826371,
+    "lon": -79.9200378,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "edgewood-christian-church",
+    "name": "Edgewood Christian Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2970746,
+    "lon": -80.0183654,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "emmanuel-lutheran-church",
+    "name": "Emmanuel Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2898581,
+    "lon": -79.9830889,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "fairview-united-methodist-church",
+    "name": "Fairview United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2965224,
+    "lon": -80.0003151,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "first-assembly-of-god-church",
+    "name": "First Assembly of God Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2922271,
+    "lon": -79.993079,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "first-wesleyan-methodist-church",
+    "name": "First Wesleyan Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2842995,
+    "lon": -79.9636482,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "forest-park-baptist-church",
+    "name": "Forest Park Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.287352,
+    "lon": -79.9836468,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "garden-city-baptist-church",
+    "name": "Garden City Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2293015,
+    "lon": -79.9289319,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 2
+  },
+  {
+    "slug": "garden-of-prayer-number-6-pentecostal-holiness-church",
+    "name": "Garden of Prayer Number 6 Pentecostal Holiness Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2865189,
+    "lon": -79.9669784,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "ghent-grace-brethren-church",
+    "name": "Ghent Grace Brethren Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2648937,
+    "lon": -79.9683312,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "grace-church",
+    "name": "Grace Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2645813,
+    "lon": -79.9955932,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "grace-covenant-church",
+    "name": "Grace Covenant Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2593077,
+    "lon": -79.9814225,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "grace-united-methodist-church",
+    "name": "Grace United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3126358,
+    "lon": -79.9522612,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "grandin-court-baptist-church",
+    "name": "Grandin Court Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2448287,
+    "lon": -79.9882213,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "hill-street-baptist-church",
+    "name": "Hill Street Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2809763,
+    "lon": -79.9411515,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "jerusalem-baptist-church",
+    "name": "Jerusalem Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2743009,
+    "lon": -79.959201,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "kingdom-hall-of-jehovahs-witnesses-2",
+    "name": "Kingdom Hall of Jehovahs Witnesses",
+    "tradition": "other",
+    "traditionLabel": "Jehovah's Witnesses",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2398651,
+    "lon": -79.9866974,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "maranatha-fellowship-church",
+    "name": "Maranatha Fellowship Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3026332,
+    "lon": -80.0014223,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "melrose-baptist-church",
+    "name": "Melrose Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2820781,
+    "lon": -79.9572585,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "mount-zion-african-methodist-episcopal-church",
+    "name": "Mount Zion African Methodist Episcopal Church",
+    "tradition": "methodist",
+    "traditionLabel": "African Methodist Episcopal",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2782571,
+    "lon": -79.9412057,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "northminister-presbyterian-church",
+    "name": "Northminister Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3020842,
+    "lon": -79.9439347,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "oakland-baptist-church",
+    "name": "Oakland Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3029171,
+    "lon": -79.9458744,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "pentecostal-holiness-church-2",
+    "name": "Pentecostal Holiness Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2951287,
+    "lon": -80.0186486,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "pilgrim-baptist-church",
+    "name": "Pilgrim Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2876414,
+    "lon": -79.9572619,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "price-memorial-african-methodist-episcopal-zion-church",
+    "name": "Price Memorial African Methodist Episcopal Zion Church",
+    "tradition": "methodist",
+    "traditionLabel": "African Methodist Episcopal",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2826365,
+    "lon": -79.9622606,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "raleigh-court-united-methodist-church",
+    "name": "Raleigh Court United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2618079,
+    "lon": -79.9780923,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "riverdale-baptist-church",
+    "name": "Riverdale Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2570848,
+    "lon": -79.9103161,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "roanoke-avenue-baptist-church",
+    "name": "Roanoke Avenue Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2709678,
+    "lon": -79.9786416,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "roanoke-valley-baptist-temple",
+    "name": "Roanoke Valley Baptist Temple",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2981919,
+    "lon": -79.9450385,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "saint-gerards-catholic-church",
+    "name": "Saint Gerards Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.283749,
+    "lon": -79.951434,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "saint-james-episcopal-church",
+    "name": "Saint James Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3131914,
+    "lon": -79.9533724,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "saint-lukes-protestant-episcopal-church",
+    "name": "Saint Lukes Protestant Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2881946,
+    "lon": -79.9550389,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "saint-thomas-of-canterbury-anglican-catholic-church",
+    "name": "Saint Thomas of Canterbury Anglican Catholic Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3204134,
+    "lon": -79.9514281,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "trinity-lutheran-church",
+    "name": "Trinity Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3095735,
+    "lon": -79.9503119,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "villa-heights-baptist-church",
+    "name": "Villa Heights Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2904112,
+    "lon": -79.976703,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "villa-heights-methodist-church",
+    "name": "Villa Heights Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2969811,
+    "lon": -79.972087,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "washington-heights-grace-brethren-church",
+    "name": "Washington Heights Grace Brethren Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2931767,
+    "lon": -80.0004117,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "wildhurst-presbyterian-church",
+    "name": "Wildhurst Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3012512,
+    "lon": -79.9397633,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "williamson-road-church-of-the-brethren",
+    "name": "Williamson Road Church of the Brethren",
+    "tradition": "other",
+    "traditionLabel": "Church of the Brethren",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.305136,
+    "lon": -79.9436514,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "woodlawn-united-methodist-church",
+    "name": "Woodlawn United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2439408,
+    "lon": -79.991826,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "woodside-evangelical-presbyterian-church",
+    "name": "Woodside Evangelical Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2720743,
+    "lon": -79.9808646,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "rescue-mission-ministries",
+    "name": "Rescue Mission Ministries",
+    "tradition": "nondenom",
+    "traditionLabel": "Non-denominational",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Helping hurting people in Jesus’ name",
+    "times": "See website",
+    "lat": 37.2699791,
+    "lon": -79.9349252,
+    "verified": "2026-09-15",
+    "unverified": false,
+    "completeness": 4
+  },
+  {
+    "slug": "parkway-wesleyan-church",
+    "name": "Parkway Wesleyan Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.303968,
+    "lon": -79.8847087,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 2
+  },
+  {
+    "slug": "garden-of-prayer-7-church",
+    "name": "Garden of Prayer 7 Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3026037,
+    "lon": -79.9802777,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "grace-fellowship-of-roanoke",
+    "name": "Grace Fellowship of Roanoke",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.227719,
+    "lon": -79.9699027,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "pilgram-baptist-church",
+    "name": "Pilgram Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "kids",
+      "livestream",
+      "parking"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Join Pilgrim Baptist Church for worship & Bible study.",
+    "times": "Sun 7:45am · 10:45am | Wed 12pm",
+    "lat": 37.2865822,
+    "lon": -79.9491806,
+    "verified": "2026-09-15",
+    "unverified": false,
+    "completeness": 6
+  },
+  {
+    "slug": "new-life-temple-pentecostal-church",
+    "name": "New Life Temple Pentecostal Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3297633,
+    "lon": -79.9648051,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "south-roanoke-baptist-church",
+    "name": "South Roanoke Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2468914,
+    "lon": -79.9498425,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "first-presbyterian-church",
+    "name": "First Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2492795,
+    "lon": -79.9454105,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "south-roanoke-united-methodist-church",
+    "name": "South Roanoke United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2460794,
+    "lon": -79.945607,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "saint-johns-episcopal-church",
+    "name": "Saint Johns Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2665131,
+    "lon": -79.9414096,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "cavalry-memorial-church",
+    "name": "Cavalry Memorial Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2536819,
+    "lon": -79.95717,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "virginia-heights-baptist-church",
+    "name": "Virginia Heights Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2656406,
+    "lon": -79.9777627,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "calvary-baptist-church",
+    "name": "Calvary Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2706338,
+    "lon": -79.9529086,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "new-hope-church",
+    "name": "New Hope Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2187938,
+    "lon": -79.9534795,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "holy-trinity-greek-orthodox-church",
+    "name": "Holy Trinity Greek Orthodox Church",
+    "tradition": "orthodox",
+    "traditionLabel": "Orthodox",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "chant",
+      "traditional"
+    ],
+    "practical": [
+      "kids",
+      "parking"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 9am · 10am | Sat 10am · 5pm",
+    "lat": 37.3030389,
+    "lon": -79.9424991,
+    "verified": "2026-09-15",
+    "unverified": false,
+    "completeness": 7
+  },
+  {
+    "slug": "central-church-of-the-brethren",
+    "name": "Central Church of the Brethren",
+    "tradition": "other",
+    "traditionLabel": "Church of the Brethren",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [
+      "lgbtq"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Called to BELIEVE • Connected in LOVE • Compelled to SERVE",
+    "times": "Sun 9:45am · 11am",
+    "lat": 37.2700428,
+    "lon": -79.949103,
+    "verified": "2026-09-15",
+    "unverified": false,
+    "completeness": 8
+  },
+  {
+    "slug": "first-christian-church",
+    "name": "First Christian Church",
+    "tradition": "other",
+    "traditionLabel": "Disciples of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2700868,
+    "lon": -79.9472688,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-brandon-avenue-southwest",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Roanoke YSA Branch local website and events for The Church of Jesus Christ of Latter-day Saints",
+    "times": "Sun 10am",
+    "lat": 37.2628332,
+    "lon": -80.0129745,
+    "verified": "2026-09-15",
+    "unverified": false,
+    "completeness": 5
+  },
+  {
+    "slug": "waverly-place-baptist-church",
+    "name": "Waverly Place Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2701752,
+    "lon": -79.9190553,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "bible-baptist-church",
+    "name": "Bible Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2377862,
+    "lon": -79.9263284,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "basilica-of-st-andrew",
+    "name": "Basilica of St. Andrew",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "kids",
+      "livestream"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "St. Andrew's Catholic Church",
+    "times": "Sun 7:30am | Sat 3:30pm · 5:30pm | Mon 12pm · 12:45pm",
+    "lat": 37.2782313,
+    "lon": -79.9398556,
+    "verified": "2026-09-15",
+    "unverified": false,
+    "completeness": 7
+  },
+  {
+    "slug": "saint-elizabeths-episcopal-church",
+    "name": "Saint Elizabeths Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2551998,
+    "lon": -79.9902642,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "first-church-of-the-brethren",
+    "name": "First Church of the Brethren",
+    "tradition": "other",
+    "traditionLabel": "Church of the Brethren",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2901894,
+    "lon": -79.9683775,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "sweet-union-baptist-church",
+    "name": "Sweet Union Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.280938,
+    "lon": -79.9475078,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "raleigh-court-presbyterian-church",
+    "name": "Raleigh Court Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2603153,
+    "lon": -79.9810066,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "riverland-road-baptist-church",
+    "name": "Riverland Road Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2578645,
+    "lon": -79.9352738,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "temple-of-the-way-out-church",
+    "name": "Temple of The Way Out Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.2981946,
+    "lon": -79.9797475,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 1
+  },
+  {
+    "slug": "westminster-church",
+    "name": "Westminster Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.3116646,
+    "lon": -80.0085644,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  },
+  {
+    "slug": "central-baptist-church-2",
+    "name": "Central Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 37.286259,
+    "lon": -79.9614862,
+    "verified": "2026-09-15",
+    "unverified": true,
+    "completeness": 0
+  }
+];
+
+  const active = { tradition:[], structure:[], language:[], music:[], practical:[], welcome:[] };
+  const quickMap = {
+    seekers: ['welcome','seekers'], english: ['language','english'],
+    kids: ['practical','kids'], accessible: ['practical','accessible'], livestream: ['practical','livestream']
+  };
+
+  // Record text comes from OSM and church websites: never trust it as HTML
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, ch =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  let query = '';
+  let view = 'list';
+  let map = null, markers = null;
+
+  function matches(c, ignoreKey) {
+    if (query && !c.name.toLowerCase().includes(query)) return false;
+    for (const key in active) {
+      if (key === ignoreKey || active[key].length === 0) continue;
+      const vals = Array.isArray(c[key]) ? c[key] : [c[key]];
+      if (!active[key].some(v => vals.includes(v))) return false;
+    }
+    return true;
+  }
+
+  // Counts show how many results each option would give with the other filters applied
+  function updateCounts() {
+    document.querySelectorAll('.opt input').forEach(cb => {
+      const f = cb.dataset.f, v = cb.value;
+      const n = churches.filter(c => matches(c, f)).filter(c => {
+        const vals = Array.isArray(c[f]) ? c[f] : [c[f]];
+        return vals.includes(v);
+      }).length;
+      cb.parentElement.querySelector('.count').textContent = n;
+      cb.parentElement.hidden = n === 0 && !cb.checked;
+    });
+  }
+
+  const sorters = {
+    name: (a, b) => a.name.localeCompare(b.name),
+    complete: (a, b) => b.completeness - a.completeness || a.name.localeCompare(b.name),
+    verified: (a, b) => (b.verified || '').localeCompare(a.verified || '') || a.name.localeCompare(b.name),
+  };
+
+  function render() {
+    const grid = document.getElementById('grid');
+    const visible = churches.filter(c => matches(c)).sort(sorters[document.getElementById('sortSelect').value]);
+    document.getElementById('count').textContent = visible.length;
+    updateCounts();
+    if (view === 'map') renderMap(visible);
+    if (visible.length === 0) {
+      grid.innerHTML = `<div class="no-results"><h3>No churches match all your filters</h3><p>Try removing one to widen your search \u2014 every filter narrows the list.</p></div>`;
+      return;
+    }
+    grid.innerHTML = visible.map(c => `
+      <article class="card" data-href="${encodeURIComponent(c.slug)}.html">
+        <div class="card-banner ${esc(c.structure)}">
+          <span class="card-struct">${esc(c.structLabel)}</span>
+          ${c.unverified ? '<span class="card-unverified">Not yet verified</span>' : ''}
+        </div>
+        <div class="card-body">
+          <div class="card-trad">${esc(c.traditionLabel)}</div>
+          <div class="card-name">${esc(c.name)}</div>
+          ${c.tagline ? `<div class="card-tagline">\u201c${esc(c.tagline)}\u201d</div>` : ''}
+          <div class="card-meta">${c.meta.map((m,i)=>`${i>0?'<span class="dot"></span>':''}<span>${esc(m)}</span>`).join('')}</div>
+          <div class="card-tags">${c.tags.map(t=>{
+            const w = ['Welcomes newcomers','LGBTQ+ affirming','Women clergy'].includes(t);
+            return `<span class="ctag ${w?'welcome':''}">${esc(t)}</span>`;
+          }).join('')}</div>
+          ${c.note ? `<div class="card-note">${esc(c.note)}</div>` : ''}
+          <div class="card-times"><i class="ti ti-clock"></i> ${esc(c.times)}</div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  document.getElementById('grid').addEventListener('click', e => {
+    const card = e.target.closest('.card');
+    if (card) location.href = card.dataset.href;
+  });
+
+  function renderMap(visible) {
+    const note = document.getElementById('mapNote');
+    if (!window.L) {
+      note.hidden = false;
+      note.textContent = 'The map could not load. Check your connection and try again.';
+      return;
+    }
+    if (!map) {
+      map = L.map('map', { scrollWheelZoom: true });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+      markers = L.layerGroup().addTo(map);
+    }
+    markers.clearLayers();
+    const placed = visible.filter(c => c.lat != null && c.lon != null);
+    placed.forEach(c => {
+      L.circleMarker([c.lat, c.lon], { radius: 7, weight: 2, color: '#2C4A3E', fillColor: '#C4603A', fillOpacity: 0.9 })
+        .bindPopup(`<div class="map-pop"><strong>${esc(c.name)}</strong><span>${esc(c.traditionLabel)}</span>` +
+                   `${c.unverified ? '<em class="pop-unverified">Not yet verified</em>' : ''}` +
+                   `${esc(c.times)}<br><a href="${encodeURIComponent(c.slug)}.html">View profile \u2192</a></div>`)
+        .addTo(markers);
+    });
+    if (placed.length) map.fitBounds(placed.map(c => [c.lat, c.lon]), { padding: [30, 30], maxZoom: 15 });
+    const missing = visible.length - placed.length;
+    note.hidden = missing === 0;
+    note.textContent = missing ? (missing === 1 ? "1 church without a location isn't shown on the map."
+                                  : `${missing} churches without a location aren't shown on the map.`) : '';
+    setTimeout(() => map.invalidateSize(), 0);
+  }
+
+  function setView(v) {
+    view = v;
+    document.getElementById('listBtn').classList.toggle('on', v === 'list');
+    document.getElementById('mapBtn').classList.toggle('on', v === 'map');
+    document.getElementById('grid').hidden = v === 'map';
+    document.getElementById('map').hidden = v !== 'map';
+    if (v === 'list') document.getElementById('mapNote').hidden = true;
+    render();
+  }
+  document.getElementById('listBtn').addEventListener('click', () => setView('list'));
+  document.getElementById('mapBtn').addEventListener('click', () => setView('map'));
+  document.getElementById('sortSelect').addEventListener('change', render);
+  document.getElementById('searchInput').addEventListener('input', e => {
+    query = e.target.value.trim().toLowerCase();
+    render();
+  });
+  document.querySelector('.search-bar button').addEventListener('click', render);
+
+  // sidebar checkbox filters
+  document.querySelectorAll('.opt input').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const f = cb.dataset.f, v = cb.value;
+      if (cb.checked) active[f].push(v);
+      else active[f] = active[f].filter(x => x !== v);
+      syncQuick();
+      render();
+    });
+  });
+
+  // quick filter bar
+  document.querySelectorAll('.qf[data-quick]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const [f, v] = quickMap[btn.dataset.quick];
+      const idx = active[f].indexOf(v);
+      if (idx === -1) { active[f].push(v); btn.classList.add('on'); }
+      else { active[f].splice(idx,1); btn.classList.remove('on'); }
+      // sync the matching sidebar checkbox
+      const cb = document.querySelector(`.opt input[data-f="${f}"][value="${v}"]`);
+      if (cb) cb.checked = active[f].includes(v);
+      render();
+    });
+  });
+
+  function syncQuick() {
+    document.querySelectorAll('.qf[data-quick]').forEach(btn => {
+      const [f, v] = quickMap[btn.dataset.quick];
+      btn.classList.toggle('on', active[f].includes(v));
+    });
+  }
+
+  document.getElementById('clearAll').addEventListener('click', () => {
+    for (const k in active) active[k] = [];
+    document.querySelectorAll('.opt input').forEach(cb => cb.checked = false);
+    syncQuick();
+    render();
+  });
+
+  // mobile sidebar
+  const sidebar = document.getElementById('sidebar'), overlay = document.getElementById('overlay');
+  function openSide(){ sidebar.classList.add('open'); overlay.classList.add('open'); }
+  function closeSide(){ sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+  document.getElementById('mobileFilterBtn').addEventListener('click', openSide);
+  document.getElementById('moreFiltersBtn').addEventListener('click', () => {
+    if (window.innerWidth <= 900) openSide();
+    else document.getElementById('sidebar').scrollIntoView({behavior:'smooth'});
+  });
+  overlay.addEventListener('click', closeSide);
+
+  function sendCard(name){ if (window.sendPrompt) sendPrompt('Show me the full church profile page for ' + name); }
+
+  render();
+</script>
+<footer style="text-align:center;font:13px/1.5 sans-serif;color:#7A7A72;padding:1.5rem 1rem 2rem">Church locations and details from <a href="https://www.openstreetmap.org/copyright" style="color:inherit">© OpenStreetMap contributors</a> (ODbL) and churches' own websites. "Not yet verified" entries have not been confirmed.</footer>
+</body>
+</html>
