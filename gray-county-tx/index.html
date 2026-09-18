@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Churches — VyneHaus</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="../assets/directory.css" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Vyne<span>Haus</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Try Church guide</a></li>
+    <li><a href="#">The film</a></li>
+    <li><a href="#">For churches</a></li>
+  </ul>
+</nav>
+
+<!-- SEARCH HEADER -->
+<div class="search-header">
+  <div class="search-header-inner">
+    <div class="crumbs" role="navigation" aria-label="Breadcrumb"><a href="../index.html">All states</a> › <a href="../texas/index.html">Texas</a></div>
+    <h1 class="search-title">Churches in Gray County, TX</h1>
+    <div class="search-bar">
+      <i class="ti ti-map-pin" aria-hidden="true"></i>
+      <input type="text" id="searchInput" placeholder="Search by church name" aria-label="Search by church name">
+      <button>Search</button>
+    </div>
+
+    <!-- QUICK FILTER BAR -->
+    <div class="quick-bar" id="quickBar">
+      <button class="qf" data-quick="seekers"><i class="ti ti-door-enter"></i> Welcomes newcomers</button>
+      <button class="qf" data-quick="english"><i class="ti ti-language"></i> English service</button>
+      <button class="qf" data-quick="kids"><i class="ti ti-mood-kid"></i> Kids' program</button>
+      <button class="qf" data-quick="accessible"><i class="ti ti-wheelchair"></i> Accessible</button>
+      <button class="qf" data-quick="livestream"><i class="ti ti-device-tv"></i> Online option</button>
+      <span class="qf-divider"></span>
+      <button class="qf qf-more" id="moreFiltersBtn"><i class="ti ti-adjustments-horizontal"></i> All filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h3>Filters</h3>
+      <button id="clearAll">Clear all</button>
+    </div>
+
+    <div class="filter-group">
+      <h4>Tradition</h4>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="catholic"><span class="box"></span> Catholic <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="orthodox"><span class="box"></span> Orthodox <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="anglican"><span class="box"></span> Anglican / Episcopal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="methodist"><span class="box"></span> Methodist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="baptist"><span class="box"></span> Baptist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="presbyterian"><span class="box"></span> Presbyterian <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="lutheran"><span class="box"></span> Lutheran <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="pentecostal"><span class="box"></span> Pentecostal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="nondenom"><span class="box"></span> Non-denominational <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="other"><span class="box"></span> Other traditions <span class="count"></span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Service centered on</h4>
+      <label class="opt"><input type="checkbox" data-f="structure" value="preach"><span class="box"></span> Preaching <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="liturgy"><span class="box"></span> Liturgy <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="spirit"><span class="box"></span> Spirit-led <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Language</h4>
+      <label class="opt"><input type="checkbox" data-f="language" value="english"><span class="box"></span> English <span class="count">5</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="spanish"><span class="box"></span> Spanish <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="korean"><span class="box"></span> Korean <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="amharic"><span class="box"></span> Amharic <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Worship style</h4>
+      <label class="opt"><input type="checkbox" data-f="music" value="contemporary"><span class="box"></span> Contemporary band <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="traditional"><span class="box"></span> Traditional / hymns <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="chant"><span class="box"></span> Liturgical chant <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="gospel"><span class="box"></span> Gospel / expressive <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Practical</h4>
+      <label class="opt"><input type="checkbox" data-f="practical" value="kids"><span class="box"></span> Kids' program <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="accessible"><span class="box"></span> Wheelchair accessible <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="parking"><span class="box"></span> Parking available <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="livestream"><span class="box"></span> Online / livestream <span class="count">3</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Welcome</h4>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="seekers"><span class="box"></span> Welcomes newcomers <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="women_lead"><span class="box"></span> Women in leadership <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="lgbtq"><span class="box"></span> LGBTQ+ affirming <span class="count">1</span></label>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <main>
+    <div class="results-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-filter-btn" id="mobileFilterBtn"><i class="ti ti-adjustments-horizontal"></i> Filters</button>
+        <span class="results-count"><strong id="count">0</strong> churches</span>
+      </div>
+      <div class="results-tools">
+        <select class="sort-select" id="sortSelect" aria-label="Sort">
+          <option value="name">Sort: Name A–Z</option>
+          <option value="complete">Sort: Most complete profile</option>
+          <option value="verified">Sort: Recently verified</option>
+        </select>
+        <div class="view-toggle" role="group" aria-label="View">
+          <button id="listBtn" class="on"><i class="ti ti-layout-grid"></i> List</button>
+          <button id="mapBtn"><i class="ti ti-map-2"></i> Map</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="grid"></div>
+    <div id="map" hidden></div>
+    <p class="map-note" id="mapNote" hidden></p>
+  </main>
+</div>
+
+<script>const churches = [
+  {
+    "slug": "alanreed-baptist-church",
+    "name": "Alanreed Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.2127736,
+    "lon": -100.7362434,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "101 Church Street, Alanreed"
+  },
+  {
+    "slug": "zion-lutheran-church",
+    "name": "Zion Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.546706400000005,
+    "lon": -100.9626571500315,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1200 North Duncan Street, Pampa"
+  },
+  {
+    "slug": "trinity-church",
+    "name": "Trinity Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.231153,
+    "lon": -100.6045589981309,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "401 West Railroad Street, McLean"
+  },
+  {
+    "slug": "hillside-christian-church",
+    "name": "Hillside Christian Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.55430765,
+    "lon": -100.97688927059278,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1633 North Nelson Street, Pampa"
+  },
+  {
+    "slug": "kingdom-hall-of-jehovah-s-witnesses",
+    "name": "Kingdom Hall of Jehovah's Witnesses",
+    "tradition": "other",
+    "traditionLabel": "Jehovah's Witnesses",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5627659,
+    "lon": -100.97309736687487,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "2300 Crescent Drive, Pampa"
+  },
+  {
+    "slug": "trinity-fellowship-church",
+    "name": "Trinity Fellowship Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.56144105,
+    "lon": -100.97369527456024,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "2225 North Hobart Street, Pampa"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.570542149999994,
+    "lon": -100.96092996735076,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "411 East 29th Avenue, Pampa"
+  },
+  {
+    "slug": "saint-vincent-de-paul-catholic-church",
+    "name": "Saint Vincent de Paul Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 35.5631642,
+    "lon": -100.97049995249328,
+    "verified": "2026-09-17",
+    "unverified": false,
+    "completeness": 3,
+    "profile": true,
+    "address": "810 West 23rd Avenue, Pampa"
+  },
+  {
+    "slug": "highland-baptist-church",
+    "name": "Highland Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.54811465,
+    "lon": -100.97369172455313,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1301 North Banks Street, Pampa"
+  },
+  {
+    "slug": "hobart-baptist-church",
+    "name": "Hobart Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.521991549999996,
+    "lon": -100.97330351922935,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1100 West Crawford Street, Pampa"
+  },
+  {
+    "slug": "calvary-baptist-church",
+    "name": "Calvary Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5616991,
+    "lon": -100.95567555505112,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "900 East 23rd Avenue, Pampa"
+  },
+  {
+    "slug": "bible-baptist-church",
+    "name": "Bible Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.53882625,
+    "lon": -100.9568838619534,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "500 East Kingsmill Avenue, Pampa"
+  },
+  {
+    "slug": "first-freewill-baptist-church",
+    "name": "First Freewill Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5472211,
+    "lon": -100.95737244533898,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "731 North Sloan Street, Pampa"
+  },
+  {
+    "slug": "first-baptist-church-pampa",
+    "name": "First Baptist Church Pampa",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 11:00; We 16:45",
+    "lat": 35.5347845,
+    "lon": -100.9678591169415,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 3,
+    "profile": true,
+    "address": "203 North West Street, Pampa"
+  },
+  {
+    "slug": "first-assembly-of-god",
+    "name": "First Assembly of God",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5316697,
+    "lon": -100.95912246680328,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "500 South Cuyler Street, Pampa"
+  },
+  {
+    "slug": "first-united-methodist-church",
+    "name": "First United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.536788200000004,
+    "lon": -100.96014318089053,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "201 East Foster Avenue, Pampa"
+  },
+  {
+    "slug": "faith-bible-church",
+    "name": "Faith Bible Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.53676505,
+    "lon": -100.9625943651797,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "205 North Cuyler Street, Pampa"
+  },
+  {
+    "slug": "redeemer-pampa",
+    "name": "Redeemer Pampa",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5373671,
+    "lon": -100.96299555,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "225 North Cuyler Street, Pampa"
+  },
+  {
+    "slug": "first-church-of-the-nazarene",
+    "name": "First Church of the Nazarene",
+    "tradition": "other",
+    "traditionLabel": "Church of the Nazarene",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5376848,
+    "lon": -100.96886571721326,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "500 North West Street, Pampa"
+  },
+  {
+    "slug": "primera-iglesia-bautista",
+    "name": "Primera Iglesia Bautista",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "spanish"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.552980950000006,
+    "lon": -100.97016695011897,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1541 North Hamilton Street, Pampa"
+  },
+  {
+    "slug": "full-armor-fellowship",
+    "name": "Full Armor Fellowship",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.55481125,
+    "lon": -100.97352823896281,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1733 North Banks Street, Pampa"
+  },
+  {
+    "slug": "hi-land-christian-church",
+    "name": "Hi-Land Christian Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.55392465,
+    "lon": -100.97354374735012,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1615 North Banks Street, Pampa"
+  },
+  {
+    "slug": "new-life-assembly-of-god",
+    "name": "New Life Assembly of God",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5509952,
+    "lon": -100.97581021788537,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1435 North Sumner Street, Pampa"
+  },
+  {
+    "slug": "kentucky-avenue-church-of-christ",
+    "name": "Kentucky Avenue Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5482968,
+    "lon": -100.98033325048141,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1612 West Kentucky Avenue, Pampa"
+  },
+  {
+    "slug": "iglesia-nueva-vida-church",
+    "name": "Iglesia Nueva Vida Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "spanish"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.519976299999996,
+    "lon": -100.97547334913295,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1200 South Sumner Street, Pampa"
+  },
+  {
+    "slug": "calvary-assembly-of-god-church",
+    "name": "Calvary Assembly of God Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.522707600000004,
+    "lon": -100.9701312,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1030 South Love Street, Pampa"
+  },
+  {
+    "slug": "grace-baptist-church",
+    "name": "Grace Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.52754255,
+    "lon": -100.95449262620085,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "824 South Barnes Street, Pampa"
+  },
+  {
+    "slug": "st-paul-united-methodist-church",
+    "name": "St Paul United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5365633,
+    "lon": -100.97235934694349,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "511 North Hobart Street, Pampa"
+  },
+  {
+    "slug": "st-matthews-episcopal-church",
+    "name": "St Matthews Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.53546245,
+    "lon": -100.96978037423925,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "727 West Browning Avenue, Pampa"
+  },
+  {
+    "slug": "briarwood-full-gospel-church",
+    "name": "Briarwood Full Gospel Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5505011,
+    "lon": -100.98216330921004,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1800 West Harvester Avenue, Pampa"
+  },
+  {
+    "slug": "arena-of-life-cowboy-church",
+    "name": "Arena of Life Cowboy Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.22945235,
+    "lon": -100.60853979999999,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "13905 I-40 Frontage Road, McLean"
+  },
+  {
+    "slug": "united-methodist-church",
+    "name": "United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.23365615,
+    "lon": -100.60226325384235,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "219 North Gray Street, McLean"
+  },
+  {
+    "slug": "new-horizon-community-fellowship",
+    "name": "New Horizon Community Fellowship",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5502756,
+    "lon": -100.95855342382242,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "711 East Harvester Avenue, Pampa"
+  },
+  {
+    "slug": "united-pentacostal-church",
+    "name": "United Pentacostal Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.537926299999995,
+    "lon": -100.98268611514538,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "610 North Naida Street, Pampa"
+  },
+  {
+    "slug": "pampa-church-of-god",
+    "name": "Pampa Church of God",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5401843,
+    "lon": -100.97499280644446,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1123 West Gwendolen Avenue, Pampa"
+  },
+  {
+    "slug": "pentecosatl-holiness-church",
+    "name": "Pentecosatl Holiness Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.53329825,
+    "lon": -100.98108165018196,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1700 Alcock Street, Pampa"
+  },
+  {
+    "slug": "somerville-street-church-of-christ",
+    "name": "Somerville Street Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.538724900000005,
+    "lon": -100.96668297482144,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "500 North Somerville Street, Pampa"
+  },
+  {
+    "slug": "seventh-day-adventist-church",
+    "name": "Seventh Day Adventist Church",
+    "tradition": "other",
+    "traditionLabel": "Seventh-day Adventist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.536403,
+    "lon": -100.97045856807765,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "421 North Ward Street, Pampa"
+  },
+  {
+    "slug": "first-baptist-church",
+    "name": "First Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.43862645,
+    "lon": -100.8034416879589,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "315 East 4th Street, Lefors"
+  },
+  {
+    "slug": "church-of-christ",
+    "name": "Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.43765105,
+    "lon": -100.80443890000001,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "215 East 3rd Street, Lefors"
+  },
+  {
+    "slug": "mary-ellen-and-harvester-church-of-christ",
+    "name": "Mary Ellen and Harvester Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.5492239,
+    "lon": -100.96489105444259,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1342 North Mary-Ellen Street, Pampa"
+  },
+  {
+    "slug": "cornerstone-baptist-church",
+    "name": "Cornerstone Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.56294475,
+    "lon": -100.98836394959389,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "2410 West 23rd Avenue, Pampa"
+  },
+  {
+    "slug": "top-o-texas-baptist-area",
+    "name": "Top O' Texas Baptist Area",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.534270649999996,
+    "lon": -100.96811074968242,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "208 North Ward Street, Pampa"
+  },
+  {
+    "slug": "harvest-fellowship-church",
+    "name": "Harvest Fellowship Church",
+    "tradition": "baptist",
+    "traditionLabel": "Southern Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.54738265,
+    "lon": -100.98552165000001,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "southside-church-of-christ",
+    "name": "Southside Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.51906554999999,
+    "lon": -100.96864595,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "11923 West McCullough Street, Pampa"
+  },
+  {
+    "slug": "iglesia-bautista-emanuel",
+    "name": "Iglesia Bautista Emanuel",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "spanish"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 35.52345235,
+    "lon": -100.95371223970163,
+    "verified": "2026-09-17",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  }
+];</script>
+<script src="../assets/directory.js"></script>
+<footer style="text-align:center;font:13px/1.5 sans-serif;color:#7A7A72;padding:1.5rem 1rem 2rem">Church locations and details from <a href="https://www.openstreetmap.org/copyright" style="color:inherit">© OpenStreetMap contributors</a> (ODbL) and churches' own websites. "Not yet verified" entries have not been confirmed.</footer>
+</body>
+</html>
