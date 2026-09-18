@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Churches — VyneHaus</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="../assets/directory.css" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Vyne<span>Haus</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Try Church guide</a></li>
+    <li><a href="#">The film</a></li>
+    <li><a href="#">For churches</a></li>
+  </ul>
+</nav>
+
+<!-- SEARCH HEADER -->
+<div class="search-header">
+  <div class="search-header-inner">
+    <div class="crumbs" role="navigation" aria-label="Breadcrumb"><a href="../index.html">All states</a> › <a href="../oregon/index.html">Oregon</a></div>
+    <h1 class="search-title">Churches in Klamath County, OR</h1>
+    <div class="search-bar">
+      <i class="ti ti-map-pin" aria-hidden="true"></i>
+      <input type="text" id="searchInput" placeholder="Search by church name" aria-label="Search by church name">
+      <button>Search</button>
+    </div>
+
+    <!-- QUICK FILTER BAR -->
+    <div class="quick-bar" id="quickBar">
+      <button class="qf" data-quick="seekers"><i class="ti ti-door-enter"></i> Welcomes newcomers</button>
+      <button class="qf" data-quick="english"><i class="ti ti-language"></i> English service</button>
+      <button class="qf" data-quick="kids"><i class="ti ti-mood-kid"></i> Kids' program</button>
+      <button class="qf" data-quick="accessible"><i class="ti ti-wheelchair"></i> Accessible</button>
+      <button class="qf" data-quick="livestream"><i class="ti ti-device-tv"></i> Online option</button>
+      <span class="qf-divider"></span>
+      <button class="qf qf-more" id="moreFiltersBtn"><i class="ti ti-adjustments-horizontal"></i> All filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h3>Filters</h3>
+      <button id="clearAll">Clear all</button>
+    </div>
+
+    <div class="filter-group">
+      <h4>Tradition</h4>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="catholic"><span class="box"></span> Catholic <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="orthodox"><span class="box"></span> Orthodox <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="anglican"><span class="box"></span> Anglican / Episcopal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="methodist"><span class="box"></span> Methodist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="baptist"><span class="box"></span> Baptist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="presbyterian"><span class="box"></span> Presbyterian <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="lutheran"><span class="box"></span> Lutheran <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="pentecostal"><span class="box"></span> Pentecostal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="nondenom"><span class="box"></span> Non-denominational <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="other"><span class="box"></span> Other traditions <span class="count"></span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Service centered on</h4>
+      <label class="opt"><input type="checkbox" data-f="structure" value="preach"><span class="box"></span> Preaching <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="liturgy"><span class="box"></span> Liturgy <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="spirit"><span class="box"></span> Spirit-led <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Language</h4>
+      <label class="opt"><input type="checkbox" data-f="language" value="english"><span class="box"></span> English <span class="count">5</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="spanish"><span class="box"></span> Spanish <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="korean"><span class="box"></span> Korean <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="amharic"><span class="box"></span> Amharic <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Worship style</h4>
+      <label class="opt"><input type="checkbox" data-f="music" value="contemporary"><span class="box"></span> Contemporary band <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="traditional"><span class="box"></span> Traditional / hymns <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="chant"><span class="box"></span> Liturgical chant <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="gospel"><span class="box"></span> Gospel / expressive <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Practical</h4>
+      <label class="opt"><input type="checkbox" data-f="practical" value="kids"><span class="box"></span> Kids' program <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="accessible"><span class="box"></span> Wheelchair accessible <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="parking"><span class="box"></span> Parking available <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="livestream"><span class="box"></span> Online / livestream <span class="count">3</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Welcome</h4>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="seekers"><span class="box"></span> Welcomes newcomers <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="women_lead"><span class="box"></span> Women in leadership <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="lgbtq"><span class="box"></span> LGBTQ+ affirming <span class="count">1</span></label>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <main>
+    <div class="results-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-filter-btn" id="mobileFilterBtn"><i class="ti ti-adjustments-horizontal"></i> Filters</button>
+        <span class="results-count"><strong id="count">0</strong> churches</span>
+      </div>
+      <div class="results-tools">
+        <select class="sort-select" id="sortSelect" aria-label="Sort">
+          <option value="name">Sort: Name A–Z</option>
+          <option value="complete">Sort: Most complete profile</option>
+          <option value="verified">Sort: Recently verified</option>
+        </select>
+        <div class="view-toggle" role="group" aria-label="View">
+          <button id="listBtn" class="on"><i class="ti ti-layout-grid"></i> List</button>
+          <button id="mapBtn"><i class="ti ti-map-2"></i> Map</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="grid"></div>
+    <div id="map" hidden></div>
+    <p class="map-note" id="mapNote" hidden></p>
+  </main>
+</div>
+
+<script>const churches = [
+  {
+    "slug": "williamson-river-mission",
+    "name": "Williamson River Mission",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.5162476,
+    "lon": -121.9186262,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "bbc-ministries",
+    "name": "BBC Ministries",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.2072222,
+    "lon": -121.7283333,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "harvest-outreach",
+    "name": "Harvest Outreach",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.1649636,
+    "lon": -121.6974867,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "merrill-baptist-church",
+    "name": "Merrill Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.0254759,
+    "lon": -121.6082802,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "klamath-falls-missionary-baptist-church",
+    "name": "Klamath Falls Missionary Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 11:00",
+    "lat": 42.1120052,
+    "lon": -121.699005,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 3,
+    "profile": true,
+    "address": "12570 Highway OR-39, Klamath Falls"
+  },
+  {
+    "slug": "calvary-chapel-klamath-falls",
+    "name": "Calvary Chapel Klamath Falls",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.2204259,
+    "lon": -121.7518904,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1201 South Alameda Avenue, Klamath Falls"
+  },
+  {
+    "slug": "st-mark-s-anglican-church",
+    "name": "St. Mark's Anglican Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.2283885,
+    "lon": -121.7778549,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "1211 Main Street, Klamath Falls"
+  },
+  {
+    "slug": "jubilee-fellowship",
+    "name": "Jubilee Fellowship",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 10:30",
+    "lat": 42.2173545,
+    "lon": -121.766611,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 4,
+    "profile": true,
+    "address": "1313 Owens Street"
+  },
+  {
+    "slug": "hope-lutheran-church",
+    "name": "Hope Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.20612825,
+    "lon": -121.72313748727375,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "2314 Homedale Road, Klamath Falls"
+  },
+  {
+    "slug": "for-his-glory-ministry-worship-center",
+    "name": "For His Glory Ministry & Worship Center",
+    "tradition": "nondenom",
+    "traditionLabel": "Non-denominational",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 10:30",
+    "lat": 42.227058400000004,
+    "lon": -121.78365264989262,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 3,
+    "profile": true,
+    "address": "707 High Street, Klamath Falls"
+  },
+  {
+    "slug": "glad-tidings-worship-centre",
+    "name": "Glad Tidings Worship Centre",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.2279794,
+    "lon": -121.78055445806467,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1007 Pine Street, Klamath Falls"
+  },
+  {
+    "slug": "immanuel-baptist-church",
+    "name": "Immanuel Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.2288772,
+    "lon": -121.77979161292026,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "225 North 11th Street, Klamath Falls"
+  },
+  {
+    "slug": "baptist-church-on-homedale",
+    "name": "Baptist Church on Homedale",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.1987024,
+    "lon": -121.72343796992058,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "3052 Homedale Road, Klamath Falls"
+  },
+  {
+    "slug": "klamath-christian-center",
+    "name": "Klamath Christian Center",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.2251972,
+    "lon": -121.71455265436171,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "6100 Church Hill Drive, Klamath Falls"
+  },
+  {
+    "slug": "assembly-of-god-church",
+    "name": "Assembly of God Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.576184850000004,
+    "lon": -121.87226786013534,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "shasta-way-christian-church",
+    "name": "Shasta Way Christian Church",
+    "tradition": "nondenom",
+    "traditionLabel": "Non-denominational",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 10:30am | Mon 9am",
+    "lat": 42.2145907,
+    "lon": -121.71681825199238,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 4,
+    "profile": true,
+    "address": ""
+  },
+  {
+    "slug": "klamath-lutheran-church",
+    "name": "Klamath Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.231070200000005,
+    "lon": -121.77954973565355,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "1175 Crescent Avenue, Klamath Falls"
+  },
+  {
+    "slug": "kingdom-hall-of-jehovah-s-witnesses",
+    "name": "Kingdom Hall of Jehovah's Witnesses",
+    "tradition": "other",
+    "traditionLabel": "Jehovah's Witnesses",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "amharic",
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "accessible"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 42.203857,
+    "lon": -121.73542742490612,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 4,
+    "profile": true,
+    "address": "2558 Fargo Street, Drain"
+  },
+  {
+    "slug": "kingdom-hall-of-jehovah-s-witnesses-henley-road",
+    "name": "Kingdom Hall of Jehovah's Witnesses",
+    "tradition": "other",
+    "traditionLabel": "Jehovah's Witnesses",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "amharic",
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "accessible"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 42.15115955,
+    "lon": -121.69927970512481,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 4,
+    "profile": true,
+    "address": "7290 Henley Road, Klamath Falls"
+  },
+  {
+    "slug": "sacred-heart-catholic-church",
+    "name": "Sacred Heart Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 9am · 11:30am | Sat 4:30pm | Tue 6pm",
+    "lat": 42.2274929,
+    "lon": -121.78293268269778,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 4,
+    "profile": true,
+    "address": "815 High Street, Klamath Falls"
+  },
+  {
+    "slug": "our-lady-of-mount-carmel-catholic-church",
+    "name": "Our Lady of Mount Carmel Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.579185499999994,
+    "lon": -121.868414,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "503 West Chocktoot Street, Chiloquin"
+  },
+  {
+    "slug": "saint-frances-cabrini-catholic-church",
+    "name": "Saint Frances Cabrini Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.1984821,
+    "lon": -121.4085746217055,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "31400 Highway 70, Bonanza"
+  },
+  {
+    "slug": "saint-pius-x-catholic-church",
+    "name": "Saint Pius X Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Making Disciples of All Nations",
+    "times": "Sun 9am | Sat 4pm · 5pm | Mon 8:30am",
+    "lat": 42.18877795,
+    "lon": -121.7299841626163,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 5,
+    "profile": true,
+    "address": "4880 Bristol Avenue, Klamath Falls"
+  },
+  {
+    "slug": "saint-augustine-catholic-church",
+    "name": "Saint Augustine Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 42.0236952,
+    "lon": -121.59108990958703,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "905 East Front Street, Merrill"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "accessible"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Christian Church in Klamath Falls, OR",
+    "times": "See website",
+    "lat": 42.21146725,
+    "lon": -121.70549749195703,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 5,
+    "profile": true,
+    "address": ""
+  },
+  {
+    "slug": "our-lady-of-the-snows-catholic-church",
+    "name": "Our Lady of the Snows Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Holy Redeemer Catholic Parish",
+    "times": "See website",
+    "lat": 43.479488450000005,
+    "lon": -121.68643475899194,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 4,
+    "profile": true,
+    "address": "120 Mississippi Drive, Gilchrist"
+  }
+];</script>
+<script src="../assets/directory.js"></script>
+<footer style="text-align:center;font:13px/1.5 sans-serif;color:#7A7A72;padding:1.5rem 1rem 2rem">Church locations and details from <a href="https://www.openstreetmap.org/copyright" style="color:inherit">© OpenStreetMap contributors</a> (ODbL) and churches' own websites. "Not yet verified" entries have not been confirmed.</footer>
+</body>
+</html>

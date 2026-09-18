@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Churches — VyneHaus</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="../assets/directory.css" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Vyne<span>Haus</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Try Church guide</a></li>
+    <li><a href="#">The film</a></li>
+    <li><a href="#">For churches</a></li>
+  </ul>
+</nav>
+
+<!-- SEARCH HEADER -->
+<div class="search-header">
+  <div class="search-header-inner">
+    <div class="crumbs" role="navigation" aria-label="Breadcrumb"><a href="../index.html">All states</a> › <a href="../washington/index.html">Washington</a></div>
+    <h1 class="search-title">Churches in Chelan County, WA</h1>
+    <div class="search-bar">
+      <i class="ti ti-map-pin" aria-hidden="true"></i>
+      <input type="text" id="searchInput" placeholder="Search by church name" aria-label="Search by church name">
+      <button>Search</button>
+    </div>
+
+    <!-- QUICK FILTER BAR -->
+    <div class="quick-bar" id="quickBar">
+      <button class="qf" data-quick="seekers"><i class="ti ti-door-enter"></i> Welcomes newcomers</button>
+      <button class="qf" data-quick="english"><i class="ti ti-language"></i> English service</button>
+      <button class="qf" data-quick="kids"><i class="ti ti-mood-kid"></i> Kids' program</button>
+      <button class="qf" data-quick="accessible"><i class="ti ti-wheelchair"></i> Accessible</button>
+      <button class="qf" data-quick="livestream"><i class="ti ti-device-tv"></i> Online option</button>
+      <span class="qf-divider"></span>
+      <button class="qf qf-more" id="moreFiltersBtn"><i class="ti ti-adjustments-horizontal"></i> All filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h3>Filters</h3>
+      <button id="clearAll">Clear all</button>
+    </div>
+
+    <div class="filter-group">
+      <h4>Tradition</h4>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="catholic"><span class="box"></span> Catholic <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="orthodox"><span class="box"></span> Orthodox <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="anglican"><span class="box"></span> Anglican / Episcopal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="methodist"><span class="box"></span> Methodist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="baptist"><span class="box"></span> Baptist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="presbyterian"><span class="box"></span> Presbyterian <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="lutheran"><span class="box"></span> Lutheran <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="pentecostal"><span class="box"></span> Pentecostal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="nondenom"><span class="box"></span> Non-denominational <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="other"><span class="box"></span> Other traditions <span class="count"></span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Service centered on</h4>
+      <label class="opt"><input type="checkbox" data-f="structure" value="preach"><span class="box"></span> Preaching <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="liturgy"><span class="box"></span> Liturgy <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="spirit"><span class="box"></span> Spirit-led <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Language</h4>
+      <label class="opt"><input type="checkbox" data-f="language" value="english"><span class="box"></span> English <span class="count">5</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="spanish"><span class="box"></span> Spanish <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="korean"><span class="box"></span> Korean <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="amharic"><span class="box"></span> Amharic <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Worship style</h4>
+      <label class="opt"><input type="checkbox" data-f="music" value="contemporary"><span class="box"></span> Contemporary band <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="traditional"><span class="box"></span> Traditional / hymns <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="chant"><span class="box"></span> Liturgical chant <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="gospel"><span class="box"></span> Gospel / expressive <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Practical</h4>
+      <label class="opt"><input type="checkbox" data-f="practical" value="kids"><span class="box"></span> Kids' program <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="accessible"><span class="box"></span> Wheelchair accessible <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="parking"><span class="box"></span> Parking available <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="livestream"><span class="box"></span> Online / livestream <span class="count">3</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Welcome</h4>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="seekers"><span class="box"></span> Welcomes newcomers <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="women_lead"><span class="box"></span> Women in leadership <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="lgbtq"><span class="box"></span> LGBTQ+ affirming <span class="count">1</span></label>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <main>
+    <div class="results-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-filter-btn" id="mobileFilterBtn"><i class="ti ti-adjustments-horizontal"></i> Filters</button>
+        <span class="results-count"><strong id="count">0</strong> churches</span>
+      </div>
+      <div class="results-tools">
+        <select class="sort-select" id="sortSelect" aria-label="Sort">
+          <option value="name">Sort: Name A–Z</option>
+          <option value="complete">Sort: Most complete profile</option>
+          <option value="verified">Sort: Recently verified</option>
+        </select>
+        <div class="view-toggle" role="group" aria-label="View">
+          <button id="listBtn" class="on"><i class="ti ti-layout-grid"></i> List</button>
+          <button id="mapBtn"><i class="ti ti-map-2"></i> Map</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="grid"></div>
+    <div id="map" hidden></div>
+    <p class="map-note" id="mapNote" hidden></p>
+  </main>
+</div>
+
+<script>const churches = [
+  {
+    "slug": "god-s-world-exploration-station",
+    "name": "God's World Exploration Station",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.5152656,
+    "lon": -120.6291402,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "awaken-wenatchee",
+    "name": "Awaken Wenatchee",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4322794,
+    "lon": -120.3133706,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "lighthouse-christian-ministry",
+    "name": "Lighthouse Christian Ministry",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4195547,
+    "lon": -120.3061346,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "community-united-methodist-church",
+    "name": "Community United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.59723815,
+    "lon": -120.66237890019559,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "418 Evans Street, Leavenworth"
+  },
+  {
+    "slug": "seventh-day-adventist-church",
+    "name": "Seventh Day Adventist Church",
+    "tradition": "other",
+    "traditionLabel": "Seventh-day Adventist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.61117075,
+    "lon": -120.66932661906246,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "10600 Ski Hill Drive, Leavenworth"
+  },
+  {
+    "slug": "st-baptist-church",
+    "name": "1st Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.596385299999994,
+    "lon": -120.66200277476075,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "429 Evans Street, Leavenworth"
+  },
+  {
+    "slug": "first-church-of-christ-scientist",
+    "name": "First Church of Christ, Scientist",
+    "tradition": "other",
+    "traditionLabel": "Christian Science",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4019816,
+    "lon": -120.30360701075651,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "cornerstone-christian-church",
+    "name": "Cornerstone Christian Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.424084699999995,
+    "lon": -120.31466091412176,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "12 North Chelan Avenue, Wenatchee"
+  },
+  {
+    "slug": "first-presbyterian-church",
+    "name": "First Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.40325445,
+    "lon": -120.32534196058401,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "church-of-christ-king-s-orchard",
+    "name": "Church of Christ - King's Orchard",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4272631,
+    "lon": -120.34145189402574,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "church-of-god-faith-of-abraham",
+    "name": "Church of God Faith of Abraham",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.451071,
+    "lon": -120.3457434177549,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1835 Western Avenue"
+  },
+  {
+    "slug": "first-church-of-the-nazarene",
+    "name": "First Church of the Nazarene",
+    "tradition": "other",
+    "traditionLabel": "Church of the Nazarene",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4102476,
+    "lon": -120.324050625,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "first-united-mechodist-church",
+    "name": "First United Mechodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4221611,
+    "lon": -120.32414627195945,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.45239495,
+    "lon": -120.34285000667049,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "sage-hills-church",
+    "name": "Sage Hills Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "kids",
+      "livestream"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 8:30am · 10am · 11:30am · 1pm | Mon 9am | Wed 6pm",
+    "lat": 47.4290297,
+    "lon": -120.34226844894931,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 6,
+    "profile": true,
+    "address": "1601 Fifth Street"
+  },
+  {
+    "slug": "wenatchee-adventist-church",
+    "name": "Wenatchee Adventist Church",
+    "tradition": "other",
+    "traditionLabel": "Seventh-day Adventist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4307153,
+    "lon": -120.34689656431202,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-titus-road",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.6024405,
+    "lon": -120.65854874148117,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "10170 Titus Road, Leavenworth"
+  },
+  {
+    "slug": "peshastin-united-church-of-christ",
+    "name": "Peshastin United Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "United Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.57015955,
+    "lon": -120.60344874368491,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "8455 Main Street, Peshastin"
+  },
+  {
+    "slug": "new-life-church",
+    "name": "New Life Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.55414185,
+    "lon": -120.60089452810078,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "7591 US Highway 97, Peshastin"
+  },
+  {
+    "slug": "dryden-community-church",
+    "name": "Dryden Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.5402948,
+    "lon": -120.56070529675449,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "6801 Dryden Avenue, Dryden"
+  },
+  {
+    "slug": "cashmere-baptist-church",
+    "name": "Cashmere Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.52184415,
+    "lon": -120.47059964961625,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "103 Aplets Way, Cashmere"
+  },
+  {
+    "slug": "saint-andrew-s-episcopal-church",
+    "name": "Saint Andrew's Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.8396636,
+    "lon": -120.01840928858779,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "120 East Woodin Avenue"
+  },
+  {
+    "slug": "st-joseph-s-catholic-church",
+    "name": "St. Joseph's Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english",
+      "spanish"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 9am · 4pm · 5pm | Sat 5pm · 7pm",
+    "lat": 47.417140599999996,
+    "lon": -120.33441471718334,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 6,
+    "profile": true,
+    "address": "625 South Elliott Avenue, Wenatchee"
+  },
+  {
+    "slug": "catholic-church",
+    "name": "Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.519014,
+    "lon": -120.47027432050439,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "300 South Division Street, Cashmere"
+  },
+  {
+    "slug": "iglesia-rio-de-vida",
+    "name": "Iglesia Rio de Vida",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "spanish"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 47.42388595,
+    "lon": -120.31131884999999,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 3,
+    "profile": true,
+    "address": "20 South Wenatchee Avenue, Wenatchee"
+  },
+  {
+    "slug": "grace-lutheran-church",
+    "name": "Grace Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4232328,
+    "lon": -120.33595656172164,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1408 Washington Street, Wenatchee"
+  },
+  {
+    "slug": "church-of-the-nazarene",
+    "name": "Church of the Nazarene",
+    "tradition": "other",
+    "traditionLabel": "Church of the Nazarene",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.5937964,
+    "lon": -120.66911444343539,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "128 Prospect Street, Leavenworth"
+  },
+  {
+    "slug": "spirit-life-center",
+    "name": "Spirit Life Center",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.59548935,
+    "lon": -120.66836991315978,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "210 Benton Street, Leavenworth"
+  },
+  {
+    "slug": "faith-lutheran-church",
+    "name": "Faith Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.59572045,
+    "lon": -120.66801102359426,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "224 Benton Street, Leavenworth"
+  },
+  {
+    "slug": "valley-christian-center",
+    "name": "Valley Christian Center",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.398813849999996,
+    "lon": -120.30739772313595,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1621 Methow Street, Wenatchee"
+  },
+  {
+    "slug": "grace-lutheran-church-elberta-avenue",
+    "name": "Grace Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.522007450000004,
+    "lon": -120.46268681575091,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "401 Elberta Avenue, Cashmere"
+  },
+  {
+    "slug": "evergreen-baptist-church",
+    "name": "Evergreen Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.52388275,
+    "lon": -120.48578016249999,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "5837 Evergreen Drive, Cashmere"
+  },
+  {
+    "slug": "lake-chelan-bible-church",
+    "name": "Lake Chelan Bible Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.83782655,
+    "lon": -120.0166834503382,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "204 East Okanogan Avenue, Chelan"
+  },
+  {
+    "slug": "st-james-episcopal-church",
+    "name": "St James Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.52135255,
+    "lon": -120.4661439925382,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "222 Cottage Avenue, Cashmere"
+  },
+  {
+    "slug": "cashmere-church-of-god",
+    "name": "Cashmere Church of God",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.51653305000001,
+    "lon": -120.48635484730721,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "5735 Pioneer Drive, Cashmere"
+  },
+  {
+    "slug": "grace-city-church",
+    "name": "Grace City Church",
+    "tradition": "nondenom",
+    "traditionLabel": "Non-denominational",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.47005215,
+    "lon": -120.34054527449551,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "277 Melody Lane, Wenatchee"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-easy-street",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.48619865,
+    "lon": -120.40773087576255,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "2821 Easy Street, Monitor"
+  },
+  {
+    "slug": "calvary-crossroads-church",
+    "name": "Calvary Crossroads Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4415293,
+    "lon": -120.33239323191643,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1301 Maple Street, Wenatchee"
+  },
+  {
+    "slug": "wenatchee-first-assembly",
+    "name": "Wenatchee First Assembly",
+    "tradition": "pentecostal",
+    "traditionLabel": "Assemblies of God",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.44682995,
+    "lon": -120.34009325283989,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1520 McKittrick Street, Wenatchee"
+  },
+  {
+    "slug": "three-holy-hierarchs-antiochian-orthodox-church",
+    "name": "Three Holy Hierarchs Antiochian Orthodox Church",
+    "tradition": "orthodox",
+    "traditionLabel": "Orthodox",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.45239735,
+    "lon": -120.34586095,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "wenatchee-brethren-baptist-church-united",
+    "name": "Wenatchee Brethren-Baptist Church United",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4154461,
+    "lon": -120.31350290792585,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "535 Okanogan Avenue, Wenatchee"
+  },
+  {
+    "slug": "cashmere-presbyterian-church",
+    "name": "Cashmere Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.52253355,
+    "lon": -120.46564111278407,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "303 Maple Street, Cashmere"
+  },
+  {
+    "slug": "cascade-mountain-bible-church",
+    "name": "Cascade Mountain Bible Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.6193796,
+    "lon": -120.65028424866696,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "11025 Chumstick Highway, Leavenworth"
+  },
+  {
+    "slug": "mid-valley-baptist-church",
+    "name": "Mid-Valley Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.536884549999996,
+    "lon": -120.55670528019826,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "8345 Stine Hill Road, Dryden"
+  },
+  {
+    "slug": "monitor-united-methodist-church",
+    "name": "Monitor United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.4848451,
+    "lon": -120.41761500552266,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "3799 Fairview Canyon Road, Monitor"
+  },
+  {
+    "slug": "saint-francis-de-sales-catholic-church",
+    "name": "Saint Francis De Sales Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.84237085,
+    "lon": -120.02059547338851,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "215 West Allen Avenue, Chelan"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-state-route-150",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.8542165,
+    "lon": -120.0499387437315,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "195 State Route 150, Chelan"
+  },
+  {
+    "slug": "entiat-warehouse-community-church",
+    "name": "Entiat Warehouse Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.690949700000004,
+    "lon": -120.20790802098486,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "14916 United States Highway 97A, Entiat"
+  },
+  {
+    "slug": "stemilt-community-church",
+    "name": "Stemilt Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.33342505,
+    "lon": -120.25508443654797,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "5201 Stemilt Loop Road, Wenatchee"
+  },
+  {
+    "slug": "christ-center-cashmere",
+    "name": "Christ Center Cashmere",
+    "tradition": "pentecostal",
+    "traditionLabel": "Assemblies of God",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.5221328,
+    "lon": -120.49058324859685,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "5800 Kimber Road, Cashmere"
+  }
+];</script>
+<script src="../assets/directory.js"></script>
+<footer style="text-align:center;font:13px/1.5 sans-serif;color:#7A7A72;padding:1.5rem 1rem 2rem">Church locations and details from <a href="https://www.openstreetmap.org/copyright" style="color:inherit">© OpenStreetMap contributors</a> (ODbL) and churches' own websites. "Not yet verified" entries have not been confirmed.</footer>
+</body>
+</html>

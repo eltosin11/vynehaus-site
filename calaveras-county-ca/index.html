@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Churches — VyneHaus</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="../assets/directory.css" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Vyne<span>Haus</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Try Church guide</a></li>
+    <li><a href="#">The film</a></li>
+    <li><a href="#">For churches</a></li>
+  </ul>
+</nav>
+
+<!-- SEARCH HEADER -->
+<div class="search-header">
+  <div class="search-header-inner">
+    <div class="crumbs" role="navigation" aria-label="Breadcrumb"><a href="../index.html">All states</a> › <a href="../california/index.html">California</a></div>
+    <h1 class="search-title">Churches in Calaveras County, CA</h1>
+    <div class="search-bar">
+      <i class="ti ti-map-pin" aria-hidden="true"></i>
+      <input type="text" id="searchInput" placeholder="Search by church name" aria-label="Search by church name">
+      <button>Search</button>
+    </div>
+
+    <!-- QUICK FILTER BAR -->
+    <div class="quick-bar" id="quickBar">
+      <button class="qf" data-quick="seekers"><i class="ti ti-door-enter"></i> Welcomes newcomers</button>
+      <button class="qf" data-quick="english"><i class="ti ti-language"></i> English service</button>
+      <button class="qf" data-quick="kids"><i class="ti ti-mood-kid"></i> Kids' program</button>
+      <button class="qf" data-quick="accessible"><i class="ti ti-wheelchair"></i> Accessible</button>
+      <button class="qf" data-quick="livestream"><i class="ti ti-device-tv"></i> Online option</button>
+      <span class="qf-divider"></span>
+      <button class="qf qf-more" id="moreFiltersBtn"><i class="ti ti-adjustments-horizontal"></i> All filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h3>Filters</h3>
+      <button id="clearAll">Clear all</button>
+    </div>
+
+    <div class="filter-group">
+      <h4>Tradition</h4>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="catholic"><span class="box"></span> Catholic <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="orthodox"><span class="box"></span> Orthodox <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="anglican"><span class="box"></span> Anglican / Episcopal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="methodist"><span class="box"></span> Methodist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="baptist"><span class="box"></span> Baptist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="presbyterian"><span class="box"></span> Presbyterian <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="lutheran"><span class="box"></span> Lutheran <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="pentecostal"><span class="box"></span> Pentecostal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="nondenom"><span class="box"></span> Non-denominational <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="other"><span class="box"></span> Other traditions <span class="count"></span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Service centered on</h4>
+      <label class="opt"><input type="checkbox" data-f="structure" value="preach"><span class="box"></span> Preaching <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="liturgy"><span class="box"></span> Liturgy <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="spirit"><span class="box"></span> Spirit-led <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Language</h4>
+      <label class="opt"><input type="checkbox" data-f="language" value="english"><span class="box"></span> English <span class="count">5</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="spanish"><span class="box"></span> Spanish <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="korean"><span class="box"></span> Korean <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="amharic"><span class="box"></span> Amharic <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Worship style</h4>
+      <label class="opt"><input type="checkbox" data-f="music" value="contemporary"><span class="box"></span> Contemporary band <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="traditional"><span class="box"></span> Traditional / hymns <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="chant"><span class="box"></span> Liturgical chant <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="gospel"><span class="box"></span> Gospel / expressive <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Practical</h4>
+      <label class="opt"><input type="checkbox" data-f="practical" value="kids"><span class="box"></span> Kids' program <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="accessible"><span class="box"></span> Wheelchair accessible <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="parking"><span class="box"></span> Parking available <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="livestream"><span class="box"></span> Online / livestream <span class="count">3</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Welcome</h4>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="seekers"><span class="box"></span> Welcomes newcomers <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="women_lead"><span class="box"></span> Women in leadership <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="lgbtq"><span class="box"></span> LGBTQ+ affirming <span class="count">1</span></label>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <main>
+    <div class="results-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-filter-btn" id="mobileFilterBtn"><i class="ti ti-adjustments-horizontal"></i> Filters</button>
+        <span class="results-count"><strong id="count">0</strong> churches</span>
+      </div>
+      <div class="results-tools">
+        <select class="sort-select" id="sortSelect" aria-label="Sort">
+          <option value="name">Sort: Name A–Z</option>
+          <option value="complete">Sort: Most complete profile</option>
+          <option value="verified">Sort: Recently verified</option>
+        </select>
+        <div class="view-toggle" role="group" aria-label="View">
+          <button id="listBtn" class="on"><i class="ti ti-layout-grid"></i> List</button>
+          <button id="mapBtn"><i class="ti ti-map-2"></i> Map</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="grid"></div>
+    <div id="map" hidden></div>
+    <p class="map-note" id="mapNote" hidden></p>
+  </main>
+</div>
+
+<script>const churches = [
+  {
+    "slug": "stone-corral-church",
+    "name": "Stone Corral Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1043656,
+    "lon": -120.911605,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "big-trees-community-bible-church",
+    "name": "Big Trees Community Bible Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.2582506,
+    "lon": -120.344086,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "congregational-church",
+    "name": "Congregational Church",
+    "tradition": "other",
+    "traditionLabel": "United Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.3003398,
+    "lon": -120.7065147,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "first-baptist-church-of-west-point",
+    "name": "First Baptist Church of West Point",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.3988008,
+    "lon": -120.5268704,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "paloma-community-open-bible-church",
+    "name": "Paloma Community Open Bible Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.2604724,
+    "lon": -120.7618796,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-thomas-aquinas-church",
+    "name": "Saint Thomas Aquinas Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.300953,
+    "lon": -120.7039803,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "assembly-of-god-church-of-san-andreas",
+    "name": "Assembly of God Church of San Andreas",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1970059,
+    "lon": -120.6872561,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "foothill-lutheran-church",
+    "name": "Foothill Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1932521,
+    "lon": -120.8246587,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "church-of-christ",
+    "name": "Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1368646,
+    "lon": -120.4576993,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "faith-lutheran-church",
+    "name": "Faith Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1377085,
+    "lon": -120.4561069,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "first-congregational-church",
+    "name": "First Congregational Church",
+    "tradition": "other",
+    "traditionLabel": "United Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.138809,
+    "lon": -120.4649218,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "mountain-ranch-lutheran-church",
+    "name": "Mountain Ranch Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.2282509,
+    "lon": -120.5418711,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-patricks-catholic-church",
+    "name": "Saint Patricks Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1399201,
+    "lon": -120.4663107,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "sierra-covenant-church",
+    "name": "Sierra Covenant Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1371424,
+    "lon": -120.4621438,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "church-of-christ-2",
+    "name": "Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.0857602,
+    "lon": -120.5713731,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1923747,
+    "lon": -120.6808942,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "community-covenant-church-of-san-andreas",
+    "name": "Community Covenant Church of San Andreas",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1952321,
+    "lon": -120.6772254,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "first-baptist-church",
+    "name": "First Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.0713109,
+    "lon": -120.5377012,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-andrews-catholic-church",
+    "name": "Saint Andrews Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1938077,
+    "lon": -120.6815984,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-claires-episcopal-church",
+    "name": "Saint Claires Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.2074169,
+    "lon": -120.3682545,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-matthews-episcopal-church",
+    "name": "Saint Matthews Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1937739,
+    "lon": -120.685911,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-patricks-catholic-church-2",
+    "name": "Saint Patricks Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.0751997,
+    "lon": -120.5449238,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "san-andreas-seventh-day-adventist-church",
+    "name": "San Andreas Seventh Day Adventist Church",
+    "tradition": "other",
+    "traditionLabel": "Seventh-day Adventist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1944831,
+    "lon": -120.6867189,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "seventh-day-adventist-church",
+    "name": "Seventh Day Adventist Church",
+    "tradition": "other",
+    "traditionLabel": "Seventh-day Adventist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.0754758,
+    "lon": -120.5456547,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "union-congregational-church",
+    "name": "Union Congregational Church",
+    "tradition": "other",
+    "traditionLabel": "United Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.0732553,
+    "lon": -120.5427015,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-2",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1415998,
+    "lon": -120.4609792,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "refuge-angels-camp",
+    "name": "Refuge Angels Camp",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 38.081514,
+    "lon": -120.5475993,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 4,
+    "profile": true,
+    "address": ""
+  },
+  {
+    "slug": "cornerstone-church-of-the-sierras",
+    "name": "Cornerstone Church of the Sierras",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.1970589,
+    "lon": -120.6804999,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "th-point-chapel",
+    "name": "12th Point Chapel",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.4123899,
+    "lon": -120.07827610000001,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "golden-hills-mennonite-church",
+    "name": "Golden Hills Mennonite Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 38.18135635,
+    "lon": -120.6815063301402,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "924 Church Hill Road, San Andreas"
+  }
+];</script>
+<script src="../assets/directory.js"></script>
+<footer style="text-align:center;font:13px/1.5 sans-serif;color:#7A7A72;padding:1.5rem 1rem 2rem">Church locations and details from <a href="https://www.openstreetmap.org/copyright" style="color:inherit">© OpenStreetMap contributors</a> (ODbL) and churches' own websites. "Not yet verified" entries have not been confirmed.</footer>
+</body>
+</html>

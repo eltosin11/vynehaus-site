@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Churches — VyneHaus</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="../assets/directory.css" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Vyne<span>Haus</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Try Church guide</a></li>
+    <li><a href="#">The film</a></li>
+    <li><a href="#">For churches</a></li>
+  </ul>
+</nav>
+
+<!-- SEARCH HEADER -->
+<div class="search-header">
+  <div class="search-header-inner">
+    <div class="crumbs" role="navigation" aria-label="Breadcrumb"><a href="../index.html">All states</a> › <a href="../oregon/index.html">Oregon</a></div>
+    <h1 class="search-title">Churches in Polk County, OR</h1>
+    <div class="search-bar">
+      <i class="ti ti-map-pin" aria-hidden="true"></i>
+      <input type="text" id="searchInput" placeholder="Search by church name" aria-label="Search by church name">
+      <button>Search</button>
+    </div>
+
+    <!-- QUICK FILTER BAR -->
+    <div class="quick-bar" id="quickBar">
+      <button class="qf" data-quick="seekers"><i class="ti ti-door-enter"></i> Welcomes newcomers</button>
+      <button class="qf" data-quick="english"><i class="ti ti-language"></i> English service</button>
+      <button class="qf" data-quick="kids"><i class="ti ti-mood-kid"></i> Kids' program</button>
+      <button class="qf" data-quick="accessible"><i class="ti ti-wheelchair"></i> Accessible</button>
+      <button class="qf" data-quick="livestream"><i class="ti ti-device-tv"></i> Online option</button>
+      <span class="qf-divider"></span>
+      <button class="qf qf-more" id="moreFiltersBtn"><i class="ti ti-adjustments-horizontal"></i> All filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h3>Filters</h3>
+      <button id="clearAll">Clear all</button>
+    </div>
+
+    <div class="filter-group">
+      <h4>Tradition</h4>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="catholic"><span class="box"></span> Catholic <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="orthodox"><span class="box"></span> Orthodox <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="anglican"><span class="box"></span> Anglican / Episcopal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="methodist"><span class="box"></span> Methodist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="baptist"><span class="box"></span> Baptist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="presbyterian"><span class="box"></span> Presbyterian <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="lutheran"><span class="box"></span> Lutheran <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="pentecostal"><span class="box"></span> Pentecostal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="nondenom"><span class="box"></span> Non-denominational <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="other"><span class="box"></span> Other traditions <span class="count"></span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Service centered on</h4>
+      <label class="opt"><input type="checkbox" data-f="structure" value="preach"><span class="box"></span> Preaching <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="liturgy"><span class="box"></span> Liturgy <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="spirit"><span class="box"></span> Spirit-led <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Language</h4>
+      <label class="opt"><input type="checkbox" data-f="language" value="english"><span class="box"></span> English <span class="count">5</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="spanish"><span class="box"></span> Spanish <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="korean"><span class="box"></span> Korean <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="amharic"><span class="box"></span> Amharic <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Worship style</h4>
+      <label class="opt"><input type="checkbox" data-f="music" value="contemporary"><span class="box"></span> Contemporary band <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="traditional"><span class="box"></span> Traditional / hymns <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="chant"><span class="box"></span> Liturgical chant <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="gospel"><span class="box"></span> Gospel / expressive <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Practical</h4>
+      <label class="opt"><input type="checkbox" data-f="practical" value="kids"><span class="box"></span> Kids' program <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="accessible"><span class="box"></span> Wheelchair accessible <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="parking"><span class="box"></span> Parking available <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="livestream"><span class="box"></span> Online / livestream <span class="count">3</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Welcome</h4>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="seekers"><span class="box"></span> Welcomes newcomers <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="women_lead"><span class="box"></span> Women in leadership <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="lgbtq"><span class="box"></span> LGBTQ+ affirming <span class="count">1</span></label>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <main>
+    <div class="results-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-filter-btn" id="mobileFilterBtn"><i class="ti ti-adjustments-horizontal"></i> Filters</button>
+        <span class="results-count"><strong id="count">0</strong> churches</span>
+      </div>
+      <div class="results-tools">
+        <select class="sort-select" id="sortSelect" aria-label="Sort">
+          <option value="name">Sort: Name A–Z</option>
+          <option value="complete">Sort: Most complete profile</option>
+          <option value="verified">Sort: Recently verified</option>
+        </select>
+        <div class="view-toggle" role="group" aria-label="View">
+          <button id="listBtn" class="on"><i class="ti ti-layout-grid"></i> List</button>
+          <button id="mapBtn"><i class="ti ti-map-2"></i> Map</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="grid"></div>
+    <div id="map" hidden></div>
+    <p class="map-note" id="mapNote" hidden></p>
+  </main>
+</div>
+
+<script>const churches = [
+  {
+    "slug": "old-german-brethren-church",
+    "name": "Old German Brethren Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.8978953,
+    "lon": -123.3820485,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "bethel-community-church",
+    "name": "Bethel Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 45.0412289,
+    "lon": -123.1839904,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "west-hills-community-church",
+    "name": "West Hills Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9712281,
+    "lon": -123.0684676,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "kingwood-bible-church",
+    "name": "Kingwood Bible Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.943676,
+    "lon": -123.05899,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1125 Elm Street Northwest, Salem"
+  },
+  {
+    "slug": "faith-evangelical-free-church",
+    "name": "Faith Evangelical Free Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9288889,
+    "lon": -123.2741667,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "buena-vista-community-church",
+    "name": "Buena Vista Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.7688889,
+    "lon": -123.1527778,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "monmouth-evangelical-church",
+    "name": "Monmouth Evangelical Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.8494444,
+    "lon": -123.2369444,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "life-church-salem",
+    "name": "Life Church Salem",
+    "tradition": "nondenom",
+    "traditionLabel": "Non-denominational",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "chant"
+    ],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Partnering with God to see His Kingdom Released",
+    "times": "Sun 9:30am",
+    "lat": 44.9332167,
+    "lon": -123.079452,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 8,
+    "profile": true,
+    "address": "255 College Drive Northwest, Salem"
+  },
+  {
+    "slug": "saint-patrick-catholic-church",
+    "name": "Saint Patrick Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.8489378,
+    "lon": -123.20348770273947,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "1275 E Street, Independence"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.97093875,
+    "lon": -123.07233614343687,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "west-salem-foursquare-church",
+    "name": "West Salem Foursquare Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9443322,
+    "lon": -123.09398588934405,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "3094 Gehlar Road Northwest, Salem"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-eola-drive-northwest",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.94199425,
+    "lon": -123.09389645375757,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "3154 Eola Drive Northwest, Salem"
+  },
+  {
+    "slug": "west-salem-united-methodist-church",
+    "name": "West Salem United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9419862,
+    "lon": -123.0600651143782,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-philip-catholic-church",
+    "name": "Saint Philip Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 44.9219784,
+    "lon": -123.328453194186,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 3,
+    "profile": true,
+    "address": "825 Southwest Mill Street, Dallas"
+  },
+  {
+    "slug": "dallas-united-methodist-church",
+    "name": "Dallas United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9248082,
+    "lon": -123.30059150852517,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "565 Southeast Lacreole Drive, Dallas"
+  },
+  {
+    "slug": "dallas-alliance-church",
+    "name": "Dallas Alliance Church",
+    "tradition": "other",
+    "traditionLabel": "Christian & Missionary Alliance",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9302985,
+    "lon": -123.300336748789,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "dallas-church-of-christ",
+    "name": "Dallas Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.93549715,
+    "lon": -123.30188413215274,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "691 North Kings Valley Highway, Dallas"
+  },
+  {
+    "slug": "grace-church",
+    "name": "Grace Church",
+    "tradition": "nondenom",
+    "traditionLabel": "Non-denominational",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 44.9311295,
+    "lon": -123.30274152281022,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": false,
+    "address": "598 East Ellendale Avenue, Dallas"
+  },
+  {
+    "slug": "the-grove-community-church",
+    "name": "The Grove Community Church",
+    "tradition": "other",
+    "traditionLabel": "Church of the Nazarene",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.934248,
+    "lon": -123.30362155061903,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "341 North Kings Valley Highway, Dallas"
+  },
+  {
+    "slug": "mosaic-church",
+    "name": "Mosaic Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Assemblies of God",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9186805,
+    "lon": -123.31569811036789,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "dallas-church",
+    "name": "Dallas Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.919681,
+    "lon": -123.31196249999999,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "dallas-evangelical-church",
+    "name": "Dallas Evangelical Church",
+    "tradition": "nondenom",
+    "traditionLabel": "Evangelical",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9217355,
+    "lon": -123.31887732487922,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "783 Southwest Church Street, Dallas"
+  },
+  {
+    "slug": "calvary-chapel-dallas",
+    "name": "Calvary Chapel Dallas",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9234955,
+    "lon": -123.3150071074636,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "628 Southeast Jefferson Street, Dallas"
+  },
+  {
+    "slug": "saint-thomas-episcopal-church",
+    "name": "Saint Thomas Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.914577,
+    "lon": -123.31959172998337,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1486 Southwest Levens Street, Dallas"
+  },
+  {
+    "slug": "living-word-faith-fellowship",
+    "name": "Living Word Faith Fellowship",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9211875,
+    "lon": -123.31362048783623,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "830 Southeast Shelton Street, Dallas"
+  },
+  {
+    "slug": "first-presbyterian-church",
+    "name": "First Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.920781,
+    "lon": -123.32041324545455,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "879 Southwest Levens Street, Dallas"
+  },
+  {
+    "slug": "dallas-foursquare-church",
+    "name": "Dallas Foursquare Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.919689000000005,
+    "lon": -123.32124658751984,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "976 Southwest Hayter Street, Dallas"
+  },
+  {
+    "slug": "new-beginnings-church-of-god-of-prophecy",
+    "name": "New Beginnings Church of God of Prophecy",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.917169,
+    "lon": -123.32397870932468,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "575 Southwest Ash Street, Dallas"
+  },
+  {
+    "slug": "dallas-seventh-day-adventist-church",
+    "name": "Dallas Seventh-Day Adventist Church",
+    "tradition": "other",
+    "traditionLabel": "Seventh-day Adventist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.915187,
+    "lon": -123.32412976038961,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-southwest-13th-street",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9154835,
+    "lon": -123.33377,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1401 Southwest 13th Street, Dallas"
+  },
+  {
+    "slug": "house-of-his-presence",
+    "name": "House of His Presence",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.9222676,
+    "lon": -123.3183205117563,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "177 Southwest Oak Street, Dallas"
+  },
+  {
+    "slug": "kingdom-hall-of-jehovah-s-witness",
+    "name": "Kingdom Hall of Jehovah's Witness",
+    "tradition": "other",
+    "traditionLabel": "Jehovah's Witnesses",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.865077400000004,
+    "lon": -123.2303989757356,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  }
+];</script>
+<script src="../assets/directory.js"></script>
+<footer style="text-align:center;font:13px/1.5 sans-serif;color:#7A7A72;padding:1.5rem 1rem 2rem">Church locations and details from <a href="https://www.openstreetmap.org/copyright" style="color:inherit">© OpenStreetMap contributors</a> (ODbL) and churches' own websites. "Not yet verified" entries have not been confirmed.</footer>
+</body>
+</html>

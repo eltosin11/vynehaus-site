@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Churches — VyneHaus</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="../assets/directory.css" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Vyne<span>Haus</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Try Church guide</a></li>
+    <li><a href="#">The film</a></li>
+    <li><a href="#">For churches</a></li>
+  </ul>
+</nav>
+
+<!-- SEARCH HEADER -->
+<div class="search-header">
+  <div class="search-header-inner">
+    <div class="crumbs" role="navigation" aria-label="Breadcrumb"><a href="../index.html">All states</a> › <a href="../washington/index.html">Washington</a></div>
+    <h1 class="search-title">Churches in Okanogan County, WA</h1>
+    <div class="search-bar">
+      <i class="ti ti-map-pin" aria-hidden="true"></i>
+      <input type="text" id="searchInput" placeholder="Search by church name" aria-label="Search by church name">
+      <button>Search</button>
+    </div>
+
+    <!-- QUICK FILTER BAR -->
+    <div class="quick-bar" id="quickBar">
+      <button class="qf" data-quick="seekers"><i class="ti ti-door-enter"></i> Welcomes newcomers</button>
+      <button class="qf" data-quick="english"><i class="ti ti-language"></i> English service</button>
+      <button class="qf" data-quick="kids"><i class="ti ti-mood-kid"></i> Kids' program</button>
+      <button class="qf" data-quick="accessible"><i class="ti ti-wheelchair"></i> Accessible</button>
+      <button class="qf" data-quick="livestream"><i class="ti ti-device-tv"></i> Online option</button>
+      <span class="qf-divider"></span>
+      <button class="qf qf-more" id="moreFiltersBtn"><i class="ti ti-adjustments-horizontal"></i> All filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h3>Filters</h3>
+      <button id="clearAll">Clear all</button>
+    </div>
+
+    <div class="filter-group">
+      <h4>Tradition</h4>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="catholic"><span class="box"></span> Catholic <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="orthodox"><span class="box"></span> Orthodox <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="anglican"><span class="box"></span> Anglican / Episcopal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="methodist"><span class="box"></span> Methodist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="baptist"><span class="box"></span> Baptist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="presbyterian"><span class="box"></span> Presbyterian <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="lutheran"><span class="box"></span> Lutheran <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="pentecostal"><span class="box"></span> Pentecostal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="nondenom"><span class="box"></span> Non-denominational <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="other"><span class="box"></span> Other traditions <span class="count"></span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Service centered on</h4>
+      <label class="opt"><input type="checkbox" data-f="structure" value="preach"><span class="box"></span> Preaching <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="liturgy"><span class="box"></span> Liturgy <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="spirit"><span class="box"></span> Spirit-led <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Language</h4>
+      <label class="opt"><input type="checkbox" data-f="language" value="english"><span class="box"></span> English <span class="count">5</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="spanish"><span class="box"></span> Spanish <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="korean"><span class="box"></span> Korean <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="amharic"><span class="box"></span> Amharic <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Worship style</h4>
+      <label class="opt"><input type="checkbox" data-f="music" value="contemporary"><span class="box"></span> Contemporary band <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="traditional"><span class="box"></span> Traditional / hymns <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="chant"><span class="box"></span> Liturgical chant <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="gospel"><span class="box"></span> Gospel / expressive <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Practical</h4>
+      <label class="opt"><input type="checkbox" data-f="practical" value="kids"><span class="box"></span> Kids' program <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="accessible"><span class="box"></span> Wheelchair accessible <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="parking"><span class="box"></span> Parking available <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="livestream"><span class="box"></span> Online / livestream <span class="count">3</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Welcome</h4>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="seekers"><span class="box"></span> Welcomes newcomers <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="women_lead"><span class="box"></span> Women in leadership <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="lgbtq"><span class="box"></span> LGBTQ+ affirming <span class="count">1</span></label>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <main>
+    <div class="results-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-filter-btn" id="mobileFilterBtn"><i class="ti ti-adjustments-horizontal"></i> Filters</button>
+        <span class="results-count"><strong id="count">0</strong> churches</span>
+      </div>
+      <div class="results-tools">
+        <select class="sort-select" id="sortSelect" aria-label="Sort">
+          <option value="name">Sort: Name A–Z</option>
+          <option value="complete">Sort: Most complete profile</option>
+          <option value="verified">Sort: Recently verified</option>
+        </select>
+        <div class="view-toggle" role="group" aria-label="View">
+          <button id="listBtn" class="on"><i class="ti ti-layout-grid"></i> List</button>
+          <button id="mapBtn"><i class="ti ti-map-2"></i> Map</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="grid"></div>
+    <div id="map" hidden></div>
+    <p class="map-note" id="mapNote" hidden></p>
+  </main>
+</div>
+
+<script>const churches = [
+  {
+    "slug": "crossroads-meeting-place",
+    "name": "Crossroads Meeting Place",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.7039056,
+    "lon": -119.4397811,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "415 South Whitcomb Avenue, Tonasket"
+  },
+  {
+    "slug": "kingdom-hall-of-jehovah-s-witnesses",
+    "name": "Kingdom Hall of Jehovah's Witnesses",
+    "tradition": "other",
+    "traditionLabel": "Jehovah's Witnesses",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.845923,
+    "lon": -119.410081,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "32501 US 97, Oroville"
+  },
+  {
+    "slug": "loomis-community-church",
+    "name": "Loomis Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.8225175,
+    "lon": -119.6354592,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "tonasket-mennonite-church",
+    "name": "Tonasket Mennonite Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 10:00, 18:30",
+    "lat": 48.7050146,
+    "lon": -119.44901622032909,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "513 Highway 7, Tonasket"
+  },
+  {
+    "slug": "tonasket-community-church",
+    "name": "Tonasket Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.70391755,
+    "lon": -119.43888991887938,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "seventh-day-adventist-church",
+    "name": "Seventh Day Adventist Church",
+    "tradition": "other",
+    "traditionLabel": "Seventh-day Adventist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.7071568,
+    "lon": -119.43705606197479,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "free-methodist-church",
+    "name": "Free Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.70505645,
+    "lon": -119.42508244519232,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "oroville-free-methodist-church",
+    "name": "Oroville Free Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.93826205,
+    "lon": -119.43308793009358,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "bible-faith-family-church",
+    "name": "Bible Faith Family Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.934863449999995,
+    "lon": -119.43470084392762,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "oroville-united-methodist-church",
+    "name": "Oroville United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.93367845,
+    "lon": -119.43462550186118,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "valley-christian-fellowship",
+    "name": "Valley Christian Fellowship",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.93710315,
+    "lon": -119.4119683498433,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "methow-valley-united-methodist",
+    "name": "Methow Valley United Methodist",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.4227784,
+    "lon": -120.15661722533324,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "friendship-alliance-church",
+    "name": "Friendship Alliance Church",
+    "tradition": "other",
+    "traditionLabel": "Christian & Missionary Alliance",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.4684687,
+    "lon": -120.17677052618069,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "faithful-baptist-church",
+    "name": "Faithful Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.41162525,
+    "lon": -119.53467652497534,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "first-presbyterian-church",
+    "name": "First Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.4104856,
+    "lon": -119.53114155081343,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "trinity-lutheran-church",
+    "name": "Trinity Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.40610885,
+    "lon": -119.53041991347116,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "omak-united-methodist-church",
+    "name": "Omak United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.4131536,
+    "lon": -119.53282177809724,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "first-assembly-of-god-of-omak",
+    "name": "First Assembly of God of Omak",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.4136225,
+    "lon": -119.52752840051338,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.41648135,
+    "lon": -119.50668733424948,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "seventh-day-adventist-christian",
+    "name": "Seventh-Day Adventist Christian",
+    "tradition": "other",
+    "traditionLabel": "Seventh-day Adventist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.408039200000005,
+    "lon": -119.53514984635834,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "cornerstone-christian",
+    "name": "Cornerstone Christian",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.415497349999995,
+    "lon": -119.52263566059364,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "new-hope-chapel-pentecostal",
+    "name": "New Hope Chapel Pentecostal",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.41255795,
+    "lon": -119.53708705477408,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "omak-foursquare-church",
+    "name": "Omak Foursquare Church",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.4223284,
+    "lon": -119.52168525,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "okanogan-valley-alliance-church",
+    "name": "Okanogan Valley Alliance Church",
+    "tradition": "other",
+    "traditionLabel": "Christian & Missionary Alliance",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.3799577,
+    "lon": -119.5585808655348,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "st-anne-s-episcopal-church",
+    "name": "St Anne's Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.399753,
+    "lon": -119.53752250839682,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "okanogan-presbyterian-church",
+    "name": "Okanogan Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.3645619,
+    "lon": -119.57942320254026,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "omak-first-baptist-church",
+    "name": "Omak First Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.401672399999995,
+    "lon": -119.53864457720042,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "catholic-church-omak-okanogan",
+    "name": "Catholic Church-Omak Okanogan",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.3885394,
+    "lon": -119.55322858385642,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "first-baptist-church",
+    "name": "First Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.3634571,
+    "lon": -119.5840824153208,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "faith-missionary-baptist",
+    "name": "Faith Missionary Baptist",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.36556905,
+    "lon": -119.58254324738259,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "okanogan-united-methodist-church",
+    "name": "Okanogan United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.35833665,
+    "lon": -119.58940783050848,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "st-mary-s-mission",
+    "name": "St Mary's Mission",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.406400399999995,
+    "lon": -119.51825074641039,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "fare-albert",
+    "name": "Fare Albert",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.1073844,
+    "lon": -119.78132369790784,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "new-testament-baptist-church",
+    "name": "New Testament Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.09752,
+    "lon": -119.78200868849049,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "church-of-christ",
+    "name": "Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.05431695,
+    "lon": -119.90308575,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "sacred-heart-mission",
+    "name": "Sacred Heart Mission",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.165904850000004,
+    "lon": -118.9769408289606,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "lighthouse-chapel-assembly-of-god",
+    "name": "Lighthouse Chapel Assembly of God",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.501053850000005,
+    "lon": -119.51099651496574,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "new-fellowship-baptist-church",
+    "name": "New Fellowship Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.49937335,
+    "lon": -119.50552329413517,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-2",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.3539641,
+    "lon": -120.11585028250374,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-3",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 47.969851000000006,
+    "lon": -118.97374517487356,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "kingdom-hall-of-jehovah-s-witnesses-senna-street",
+    "name": "Kingdom Hall of Jehovah's Witnesses",
+    "tradition": "other",
+    "traditionLabel": "Jehovah's Witnesses",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.425610649999996,
+    "lon": -119.50618221176785,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "1009 Senna Street, Omak"
+  },
+  {
+    "slug": "holy-rosary-catholic-church",
+    "name": "Holy Rosary Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.706794099999996,
+    "lon": -119.4372480109499,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "103 South Whitcomb Avenue, Tonasket"
+  },
+  {
+    "slug": "oroville-community-bible",
+    "name": "Oroville Community Bible",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.9339875,
+    "lon": -119.43657807622495,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-marys-mission",
+    "name": "Saint Marys Mission",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.374488400000004,
+    "lon": -119.44884359169912,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "25 Mission Road, Omak"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-4",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.96867535,
+    "lon": -119.44912924102994,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "hope-lutheran-church",
+    "name": "Hope Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 48.7020603,
+    "lon": -119.4415542418568,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "623 South Whitcomb Avenue, Tonasket"
+  }
+];</script>
+<script src="../assets/directory.js"></script>
+<footer style="text-align:center;font:13px/1.5 sans-serif;color:#7A7A72;padding:1.5rem 1rem 2rem">Church locations and details from <a href="https://www.openstreetmap.org/copyright" style="color:inherit">© OpenStreetMap contributors</a> (ODbL) and churches' own websites. "Not yet verified" entries have not been confirmed.</footer>
+</body>
+</html>

@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Churches — VyneHaus</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="../assets/directory.css" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Vyne<span>Haus</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Try Church guide</a></li>
+    <li><a href="#">The film</a></li>
+    <li><a href="#">For churches</a></li>
+  </ul>
+</nav>
+
+<!-- SEARCH HEADER -->
+<div class="search-header">
+  <div class="search-header-inner">
+    <div class="crumbs" role="navigation" aria-label="Breadcrumb"><a href="../index.html">All states</a> › <a href="../oregon/index.html">Oregon</a></div>
+    <h1 class="search-title">Churches in Deschutes County, OR</h1>
+    <div class="search-bar">
+      <i class="ti ti-map-pin" aria-hidden="true"></i>
+      <input type="text" id="searchInput" placeholder="Search by church name" aria-label="Search by church name">
+      <button>Search</button>
+    </div>
+
+    <!-- QUICK FILTER BAR -->
+    <div class="quick-bar" id="quickBar">
+      <button class="qf" data-quick="seekers"><i class="ti ti-door-enter"></i> Welcomes newcomers</button>
+      <button class="qf" data-quick="english"><i class="ti ti-language"></i> English service</button>
+      <button class="qf" data-quick="kids"><i class="ti ti-mood-kid"></i> Kids' program</button>
+      <button class="qf" data-quick="accessible"><i class="ti ti-wheelchair"></i> Accessible</button>
+      <button class="qf" data-quick="livestream"><i class="ti ti-device-tv"></i> Online option</button>
+      <span class="qf-divider"></span>
+      <button class="qf qf-more" id="moreFiltersBtn"><i class="ti ti-adjustments-horizontal"></i> All filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h3>Filters</h3>
+      <button id="clearAll">Clear all</button>
+    </div>
+
+    <div class="filter-group">
+      <h4>Tradition</h4>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="catholic"><span class="box"></span> Catholic <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="orthodox"><span class="box"></span> Orthodox <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="anglican"><span class="box"></span> Anglican / Episcopal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="methodist"><span class="box"></span> Methodist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="baptist"><span class="box"></span> Baptist <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="presbyterian"><span class="box"></span> Presbyterian <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="lutheran"><span class="box"></span> Lutheran <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="pentecostal"><span class="box"></span> Pentecostal <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="nondenom"><span class="box"></span> Non-denominational <span class="count"></span></label>
+      <label class="opt"><input type="checkbox" data-f="tradition" value="other"><span class="box"></span> Other traditions <span class="count"></span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Service centered on</h4>
+      <label class="opt"><input type="checkbox" data-f="structure" value="preach"><span class="box"></span> Preaching <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="liturgy"><span class="box"></span> Liturgy <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="structure" value="spirit"><span class="box"></span> Spirit-led <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Language</h4>
+      <label class="opt"><input type="checkbox" data-f="language" value="english"><span class="box"></span> English <span class="count">5</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="spanish"><span class="box"></span> Spanish <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="korean"><span class="box"></span> Korean <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="language" value="amharic"><span class="box"></span> Amharic <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Worship style</h4>
+      <label class="opt"><input type="checkbox" data-f="music" value="contemporary"><span class="box"></span> Contemporary band <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="traditional"><span class="box"></span> Traditional / hymns <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="chant"><span class="box"></span> Liturgical chant <span class="count">1</span></label>
+      <label class="opt"><input type="checkbox" data-f="music" value="gospel"><span class="box"></span> Gospel / expressive <span class="count">1</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Practical</h4>
+      <label class="opt"><input type="checkbox" data-f="practical" value="kids"><span class="box"></span> Kids' program <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="accessible"><span class="box"></span> Wheelchair accessible <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="parking"><span class="box"></span> Parking available <span class="count">4</span></label>
+      <label class="opt"><input type="checkbox" data-f="practical" value="livestream"><span class="box"></span> Online / livestream <span class="count">3</span></label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Welcome</h4>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="seekers"><span class="box"></span> Welcomes newcomers <span class="count">3</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="women_lead"><span class="box"></span> Women in leadership <span class="count">2</span></label>
+      <label class="opt"><input type="checkbox" data-f="welcome" value="lgbtq"><span class="box"></span> LGBTQ+ affirming <span class="count">1</span></label>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <main>
+    <div class="results-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-filter-btn" id="mobileFilterBtn"><i class="ti ti-adjustments-horizontal"></i> Filters</button>
+        <span class="results-count"><strong id="count">0</strong> churches</span>
+      </div>
+      <div class="results-tools">
+        <select class="sort-select" id="sortSelect" aria-label="Sort">
+          <option value="name">Sort: Name A–Z</option>
+          <option value="complete">Sort: Most complete profile</option>
+          <option value="verified">Sort: Recently verified</option>
+        </select>
+        <div class="view-toggle" role="group" aria-label="View">
+          <button id="listBtn" class="on"><i class="ti ti-layout-grid"></i> List</button>
+          <button id="mapBtn"><i class="ti ti-map-2"></i> Map</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="grid"></div>
+    <div id="map" hidden></div>
+    <p class="map-note" id="mapNote" hidden></p>
+  </main>
+</div>
+
+<script>const churches = [
+  {
+    "slug": "dayspring-christian-center",
+    "name": "Dayspring Christian Center",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.3482881,
+    "lon": -121.182149,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "journey",
+    "name": "Journey",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "livestream"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 9am · 10:45am | Mon 8:30pm | Wed 8:30pm",
+    "lat": 44.0609571,
+    "lon": -121.3137111,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 6,
+    "profile": true,
+    "address": "70 Northwest Newport Avenue, Bend"
+  },
+  {
+    "slug": "shepard-s-house-ministries",
+    "name": "Shepard’s House Ministries",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.067281,
+    "lon": -121.3048427,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "journey-church",
+    "name": "Journey Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.0267244,
+    "lon": -121.3151209,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "compass",
+    "name": "Compass",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.0387598,
+    "lon": -121.3029015,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "holy-communion-church",
+    "name": "Holy Communion Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.0364072,
+    "lon": -121.3062655,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-thomas-catholic-church",
+    "name": "Saint Thomas Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english",
+      "spanish"
+    ],
+    "music": [
+      "chant"
+    ],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "See our mission statement, Mass times, and popular programs.",
+    "times": "Sun 8am · 10am · 12pm | Sat 8am · 4:30pm | Mon 8am · 5pm",
+    "lat": 44.29211645,
+    "lon": -121.18802021476947,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 7,
+    "profile": true,
+    "address": "1720 Northwest 19th Street, Redmond"
+  },
+  {
+    "slug": "trinity-episcopal-church",
+    "name": "Trinity Episcopal Church",
+    "tradition": "anglican",
+    "traditionLabel": "Anglican / Episcopal",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "kids",
+      "livestream"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 8am · 10am",
+    "lat": 44.0557362,
+    "lon": -121.31792259805638,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 6,
+    "profile": true,
+    "address": "469 Northwest Wall Street, Bend"
+  },
+  {
+    "slug": "first-united-methodist-church",
+    "name": "First United Methodist Church",
+    "tradition": "methodist",
+    "traditionLabel": "United Methodist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "livestream"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 09:00,11:00",
+    "lat": 44.0555597,
+    "lon": -121.31535574238288,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 5,
+    "profile": true,
+    "address": "680 Northwest Bond Street, Bend"
+  },
+  {
+    "slug": "saint-francis-of-assisi-catholic-church",
+    "name": "Saint Francis of Assisi Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "livestream"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 7am · 8:45am · 5pm | Sat 7:30am · 8am · 4:30pm | Mon 7am",
+    "lat": 44.0561217,
+    "lon": -121.31157146232712,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 7,
+    "profile": true,
+    "address": "494 Northwest Lava Road, Bend"
+  },
+  {
+    "slug": "bend-first-presbyterian-church",
+    "name": "Bend First Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "kids",
+      "livestream"
+    ],
+    "welcome": [
+      "lgbtq"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 8:30am",
+    "lat": 44.0525421,
+    "lon": -121.29213644371552,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 7,
+    "profile": true,
+    "address": "230 Northeast 9th Street, Bend"
+  },
+  {
+    "slug": "victory-baptist-church",
+    "name": "Victory Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 11:00,18:00",
+    "lat": 44.0603917,
+    "lon": -121.29005294007618,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 4,
+    "profile": true,
+    "address": "1034 Northeast 11th Street, Bend"
+  },
+  {
+    "slug": "holy-trinity-catholic-church",
+    "name": "Holy Trinity Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 43.897494449999996,
+    "lon": -121.419793123615,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": true,
+    "address": "18160 Cottonwood Road, Sunriver"
+  },
+  {
+    "slug": "deschutes-christian-fellowship",
+    "name": "Deschutes Christian Fellowship",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.1086228,
+    "lon": -121.31335595608329,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "faith-christian-center",
+    "name": "Faith Christian Center",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "kids",
+      "livestream"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Faith Christian Center is passionate about the Presence of God!",
+    "times": "Sun 9am · 9:30am · 5:45pm · 6pm | Mon 6:30pm | Tue 11:30am · 2:30pm",
+    "lat": 44.06061125,
+    "lon": -121.29117441886298,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 7,
+    "profile": true,
+    "address": "1049 Northeast 11th Street, Bend"
+  },
+  {
+    "slug": "terrebonne-assembly-of-god",
+    "name": "Terrebonne Assembly of God",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.351174799999995,
+    "lon": -121.17137189774058,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "foundry-church",
+    "name": "Foundry Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "kids",
+      "livestream"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 9am · 10:15am",
+    "lat": 44.0586538,
+    "lon": -121.31116313759513,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 6,
+    "profile": true,
+    "address": "60 Northwest Oregon Avenue, Bend"
+  },
+  {
+    "slug": "desert-streams",
+    "name": "Desert Streams",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 10:00-12:00",
+    "lat": 44.05204,
+    "lon": -121.2625179686946,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 4,
+    "profile": true,
+    "address": "62010 27th Street, Bend"
+  },
+  {
+    "slug": "bend-bible-fellowship",
+    "name": "Bend Bible Fellowship",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 10:00-12:00",
+    "lat": 44.0564223,
+    "lon": -121.33588549999999,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 4,
+    "profile": true,
+    "address": "1599 Northwest Galveston Avenue, Bend"
+  },
+  {
+    "slug": "discovery-christian",
+    "name": "Discovery Christian",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 44.0626632,
+    "lon": -121.31766519849782,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 2,
+    "profile": true,
+    "address": "334 Northwest Newport Avenue, Bend"
+  },
+  {
+    "slug": "newport-avenue-church-of-christ",
+    "name": "Newport Avenue Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Su 10:45",
+    "lat": 44.06261765,
+    "lon": -121.32012217829958,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 3,
+    "profile": true,
+    "address": "554 Northwest Newport Avenue, Bend"
+  },
+  {
+    "slug": "grace-first-lutheran-church",
+    "name": "Grace First Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "kids",
+      "livestream"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 9:30am | Tue 9am",
+    "lat": 44.064702350000005,
+    "lon": -121.34897024775088,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 6,
+    "profile": true,
+    "address": "2265 Northwest Shevlin Park Road, Bend"
+  },
+  {
+    "slug": "nativity-lutheran-church",
+    "name": "Nativity Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.008484800000005,
+    "lon": -121.28852049083856,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "60850 Brosterhous Road, Bend"
+  },
+  {
+    "slug": "christian-life-center",
+    "name": "Christian Life Center",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.05764665,
+    "lon": -121.2382171,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "21720 Highway 20, Bend"
+  },
+  {
+    "slug": "kingdom-hall-of-jehovah-s-witnesses",
+    "name": "Kingdom Hall of Jehovah's Witnesses",
+    "tradition": "other",
+    "traditionLabel": "Jehovah's Witnesses",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "amharic",
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "accessible"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 43.704192899999995,
+    "lon": -121.48012565354634,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 4,
+    "profile": true,
+    "address": "52412 Antler Lane, La Pine"
+  },
+  {
+    "slug": "saint-edward-the-martyr-catholic-church",
+    "name": "Saint Edward the Martyr Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Roman Catholic Church in Sisters, Oregon",
+    "times": "See website",
+    "lat": 44.2922765,
+    "lon": -121.56737690389384,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 5,
+    "profile": true,
+    "address": "123 North Trinity Way, Sisters"
+  },
+  {
+    "slug": "unity-spiritual-community-of-central-oregon",
+    "name": "Unity Spiritual Community of Central Oregon",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 44.1099073,
+    "lon": -121.30973415,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 2,
+    "profile": false,
+    "address": "63645 Scenic Drive, Bend"
+  },
+  {
+    "slug": "berean-bible-church",
+    "name": "Berean Bible Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.269661049999996,
+    "lon": -121.19548565,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "2378 Southwest Glacier Place, Redmond"
+  },
+  {
+    "slug": "new-hope-church",
+    "name": "New Hope Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.02252905,
+    "lon": -121.31986210131132,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 44.007431249999996,
+    "lon": -121.28300704812801,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 5,
+    "profile": true,
+    "address": "60800 Tekampe Road, Bend"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-northeast-thompson-drive",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 44.0749505,
+    "lon": -121.2873522061754,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 5,
+    "profile": true,
+    "address": "1260 Northeast Thompson Drive, Bend"
+  },
+  {
+    "slug": "journey-in-redmond",
+    "name": "Journey in Redmond",
+    "tradition": "nondenom",
+    "traditionLabel": "Non-denominational",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 8am · 9:30am · 11am · 12:30pm · 6pm · 6:30pm · 6:33pm | Mon 8am · 9:30am · 11am · 12:30pm | Wed 6pm · 6:30pm · 6:33pm",
+    "lat": 44.241877,
+    "lon": -121.19036245588235,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 6,
+    "profile": true,
+    "address": "3732 Southwest 21st Place, Redmond"
+  },
+  {
+    "slug": "impact-faith-church",
+    "name": "Impact Faith Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.116673250000005,
+    "lon": -121.29144458900831,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "smith-rock-community-church",
+    "name": "Smith Rock Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.35240955,
+    "lon": -121.17739779491117,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 0,
+    "profile": false,
+    "address": ""
+  },
+  {
+    "slug": "saint-francis-of-assisi-catholic-church-northeast-27th-street",
+    "name": "Saint Francis of Assisi Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "livestream"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Sun 7am · 8:45am · 5pm | Sat 7:30am · 8am · 4:30pm | Mon 7am",
+    "lat": 44.07459955,
+    "lon": -121.26065550775452,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 7,
+    "profile": true,
+    "address": "2450 Northeast 27th Street, Bend"
+  },
+  {
+    "slug": "tumalo-community-church",
+    "name": "Tumalo Community Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.14793855,
+    "lon": -121.33208752747525,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "64671 Bruce Avenue, Bend"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-day-road",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 43.713868,
+    "lon": -121.52490867937257,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 5,
+    "profile": true,
+    "address": "52680 Day Road, La Pine"
+  },
+  {
+    "slug": "the-church-of-jesus-christ-of-latter-day-saints-northwest-shevlin-park-road",
+    "name": "The Church of Jesus Christ of Latter-day Saints",
+    "tradition": "other",
+    "traditionLabel": "Latter-day Saints",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [
+      "kids"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 44.06697785,
+    "lon": -121.35428450978972,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 5,
+    "profile": true,
+    "address": "2555 Northwest Shevlin Park Road, Bend"
+  },
+  {
+    "slug": "community-bible-church",
+    "name": "Community Bible Church",
+    "tradition": "other",
+    "traditionLabel": "Other",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Non-denominational church in Sunriver, Oregon.",
+    "times": "Sun 9am",
+    "lat": 43.87766405,
+    "lon": -121.43443512125506,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 6,
+    "profile": true,
+    "address": "1 Theater Drive, Sunriver"
+  },
+  {
+    "slug": "redmond-assembly-of-god",
+    "name": "Redmond Assembly of God",
+    "tradition": "pentecostal",
+    "traditionLabel": "Pentecostal",
+    "structure": "spirit",
+    "structLabel": "Spirit-led",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [
+      "kids",
+      "parking"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Creating Authentic Experiences for People",
+    "times": "Sun 10am",
+    "lat": 44.277001999999996,
+    "lon": -121.18848601295336,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 7,
+    "profile": true,
+    "address": "1865 West Antler Avenue, Redmond"
+  },
+  {
+    "slug": "zion-lutheran-church",
+    "name": "Zion Lutheran Church",
+    "tradition": "lutheran",
+    "traditionLabel": "Lutheran",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.2757875,
+    "lon": -121.17999090015016,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "Redmond"
+  },
+  {
+    "slug": "community-presbyterian-church",
+    "name": "Community Presbyterian Church",
+    "tradition": "presbyterian",
+    "traditionLabel": "Presbyterian",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "gospel",
+      "traditional"
+    ],
+    "practical": [
+      "kids",
+      "livestream"
+    ],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Community Presbyterian Church Redmond Oregon",
+    "times": "Sun 10am | Mon 8am",
+    "lat": 44.28051,
+    "lon": -121.19052169979295,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 8,
+    "profile": true,
+    "address": "529 Northwest 19th Street, Redmond"
+  },
+  {
+    "slug": "highland-baptist-church",
+    "name": "Highland Baptist Church",
+    "tradition": "baptist",
+    "traditionLabel": "Baptist",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 44.2685415,
+    "lon": -121.20705910811049,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "Redmond"
+  },
+  {
+    "slug": "church-of-christ",
+    "name": "Church of Christ",
+    "tradition": "other",
+    "traditionLabel": "Church of Christ",
+    "structure": "preach",
+    "structLabel": "Preaching-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "Service times not listed",
+    "lat": 43.6686768,
+    "lon": -121.50465404612726,
+    "verified": "2026-09-18",
+    "unverified": true,
+    "completeness": 1,
+    "profile": false,
+    "address": "La Pine"
+  },
+  {
+    "slug": "holy-redeemer-catholic-church",
+    "name": "Holy Redeemer Catholic Church",
+    "tradition": "catholic",
+    "traditionLabel": "Catholic",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [],
+    "practical": [],
+    "welcome": [],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "",
+    "times": "See website",
+    "lat": 43.7022207,
+    "lon": -121.51937876449642,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 3,
+    "profile": true,
+    "address": "16137 Burgess Road, La Pine"
+  },
+  {
+    "slug": "st-jacob-orthodox-church",
+    "name": "St Jacob Orthodox Church",
+    "tradition": "orthodox",
+    "traditionLabel": "Orthodox",
+    "structure": "liturgy",
+    "structLabel": "Liturgy-centered",
+    "language": [
+      "english"
+    ],
+    "music": [
+      "traditional"
+    ],
+    "practical": [],
+    "welcome": [
+      "seekers"
+    ],
+    "meta": [],
+    "tags": [],
+    "note": "",
+    "tagline": "Christ's Church Sojourning in Central Oregon",
+    "times": "Sun 9:30am | Wed 6pm",
+    "lat": 44.0821987,
+    "lon": -121.20379574178665,
+    "verified": "2026-09-18",
+    "unverified": false,
+    "completeness": 7,
+    "profile": true,
+    "address": "62855 Powell Butte Highway, Bend"
+  }
+];</script>
+<script src="../assets/directory.js"></script>
+<footer style="text-align:center;font:13px/1.5 sans-serif;color:#7A7A72;padding:1.5rem 1rem 2rem">Church locations and details from <a href="https://www.openstreetmap.org/copyright" style="color:inherit">© OpenStreetMap contributors</a> (ODbL) and churches' own websites. "Not yet verified" entries have not been confirmed.</footer>
+</body>
+</html>
