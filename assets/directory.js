@@ -56,7 +56,8 @@
       <article class="card${c.profile ? '' : ' no-profile'}" ${c.profile ? `data-href="${encodeURIComponent(c.slug)}.html"` : ''}>
         <div class="card-banner ${esc(c.structure)}">
           <span class="card-struct">${esc(c.structLabel)}</span>
-          ${c.unverified ? '<span class="card-unverified">Not yet verified</span>' : ''}
+          ${c.unverified ? (c.listed ? '<span class="card-listed" title="Found in both OpenStreetMap and Overture Maps">Listed in 2 sources</span>'
+                                     : '<span class="card-unverified">Not yet verified</span>') : ''}
         </div>
         <div class="card-body">
           <div class="card-trad">${esc(c.traditionLabel)}</div>
@@ -69,6 +70,8 @@
           }).join('')}</div>
           ${c.note ? `<div class="card-note">${esc(c.note)}</div>` : ''}
           ${c.address && !c.profile ? `<div class="card-times"><i class="ti ti-map-pin"></i> ${esc(c.address)}</div>` : ''}
+          ${c.phone && !c.profile ? `<div class="card-times"><i class="ti ti-phone"></i> <a href="tel:${esc(c.phone.replace(/[^+\d]/g, ''))}">${esc(c.phone)}</a></div>` : ''}
+          ${c.facebook && !c.profile ? `<div class="card-times"><i class="ti ti-brand-facebook"></i> <a href="${esc(c.facebook)}" rel="noopener nofollow" target="_blank">Facebook page</a></div>` : ''}
           <div class="card-times"><i class="ti ti-clock"></i> ${esc(c.times)}</div>
         </div>
       </article>
@@ -99,7 +102,8 @@
     placed.forEach(c => {
       L.circleMarker([c.lat, c.lon], { radius: 7, weight: 2, color: '#2C4A3E', fillColor: '#C4603A', fillOpacity: 0.9 })
         .bindPopup(`<div class="map-pop"><strong>${esc(c.name)}</strong><span>${esc(c.traditionLabel)}</span>` +
-                   `${c.unverified ? '<em class="pop-unverified">Not yet verified</em>' : ''}` +
+                   `${c.unverified ? (c.listed ? '<em class="pop-listed">Listed in 2 sources</em>'
+                                               : '<em class="pop-unverified">Not yet verified</em>') : ''}` +
                    `${esc(c.times)}` +
                    (c.profile ? `<br><a href="${encodeURIComponent(c.slug)}.html">View profile \u2192</a>`
                               : (c.address ? `<br>${esc(c.address)}` : '')) + `</div>`)
