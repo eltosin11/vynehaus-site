@@ -1,5 +1,24 @@
 // Directory page behaviour: filters, search, sort, list/map.
-// `churches` is defined inline by each page.
+// Records live in churches.json next to the page (one entry per church, short keys
+// and omitted empties, so a big county stays a small download). Labels the page can
+// look up are not stored per record.
+  const TRADITION = {catholic:'Catholic', orthodox:'Orthodox', anglican:'Anglican / Episcopal',
+    methodist:'Methodist', baptist:'Baptist', presbyterian:'Presbyterian', lutheran:'Lutheran',
+    pentecostal:'Pentecostal', nondenom:'Non-denominational', other:'Other'};
+  const STRUCTURE = {preach:'Preaching-centered', liturgy:'Liturgy-centered', spirit:'Spirit-led'};
+  // full field names the rest of the page uses, filled in from the compact record
+  const expand = c => ({
+    slug: c.s, name: c.n, tradition: c.t || 'other', structure: c.st || 'preach',
+    traditionLabel: c.tl || TRADITION[c.t || 'other'] || 'Other',
+    structLabel: c.sl || STRUCTURE[c.st || 'preach'],
+    language: c.lang || [], music: c.m || [], practical: c.p || [], welcome: c.w || [],
+    meta: c.meta || [], tags: c.tags || [], note: c.note || '', tagline: c.tag || '',
+    times: c.ti || (c.web ? 'See website' : 'Service times not listed'),
+    lat: c.lat, lon: c.lon, verified: c.v || '', unverified: !!c.u, listed: !!c.l,
+    phone: c.ph || '', facebook: c.fb || '', website: c.web || '',
+    completeness: c.c || 0, profile: !!c.pr, address: c.a || '',
+  });
+  let churches = [];
   const active = { tradition:[], structure:[], language:[], music:[], practical:[], welcome:[] };
   const quickMap = {
     seekers: ['welcome','seekers'], english: ['language','english'],
@@ -72,6 +91,7 @@
           ${c.address && !c.profile ? `<div class="card-times"><i class="ti ti-map-pin"></i> ${esc(c.address)}</div>` : ''}
           ${c.phone && !c.profile ? `<div class="card-times"><i class="ti ti-phone"></i> <a href="tel:${esc(c.phone.replace(/[^+\d]/g, ''))}">${esc(c.phone)}</a></div>` : ''}
           ${c.facebook && !c.profile ? `<div class="card-times"><i class="ti ti-brand-facebook"></i> <a href="${esc(c.facebook)}" rel="noopener nofollow" target="_blank">Facebook page</a></div>` : ''}
+          ${c.website && !c.profile ? `<div class="card-times"><i class="ti ti-world"></i> <a href="${esc(c.website)}" rel="noopener nofollow" target="_blank">Church website</a></div>` : ''}
           <div class="card-times"><i class="ti ti-clock"></i> ${esc(c.times)}</div>
         </div>
       </article>
@@ -187,4 +207,12 @@
 
   function sendCard(name){ if (window.sendPrompt) sendPrompt('Show me the full church profile page for ' + name); }
 
-  render();
+  fetch('churches.json')
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => { churches = data.map(expand); render(); })
+    .catch(err => {
+      document.getElementById('grid').innerHTML =
+        '<div class="no-results"><h3>The church list could not be loaded</h3>' +
+        '<p>Check your connection and reload the page.</p></div>';
+      console.error('churches.json:', err);
+    });
