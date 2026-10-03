@@ -108,7 +108,7 @@
           ${c.verified ? `<span class="card-src">${TICK} From their website</span>` : ''}
           <span class="card-act">
             ${c.phone ? `<a href="tel:${esc(c.phone.replace(/[^+\d]/g, ''))}">Call</a>` : ''}
-            ${c.website ? `<a href="${esc(c.website)}" rel="noopener nofollow" target="_blank">Website</a>` : ''}
+            ${c.website ? `<a href="${esc(c.website)}" rel="noopener nofollow" target="_blank">${c.website.includes('facebook.com') ? 'Facebook' : 'Website'}</a>` : ''}
             ${c.facebook && !c.website ? `<a href="${esc(c.facebook)}" rel="noopener nofollow" target="_blank">Facebook</a>` : ''}
             ${c.lat != null ? `<a href="https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lon}" rel="noopener nofollow" target="_blank">Directions</a>` : ''}
           </span>
